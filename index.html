@@ -3,717 +3,423 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wadala East · Financial & Plot Simulation</title>
+  <title>Wadala FBC Simulator</title>
   <style>
     :root {
       --bg: #081218;
-      --bg-2: #0e1a23;
       --panel: #121d27;
-      --panel-2: #162330;
-      --panel-3: #1b2d39;
-      --line: rgba(255,255,255,0.08);
-      --line-strong: rgba(255,255,255,0.14);
-      --text: #edf3f8;
-      --muted: #9ca9b5;
-      --muted-2: #8191a0;
-      --teal: #59d7c1;
-      --teal-2: #41b9a8;
-      --blue: #73b9ff;
-      --indigo: #8ea8ff;
-      --amber: #ffbf69;
-      --amber-2: #d88d3f;
-      --orange: #ff8b5d;
-      --red: #ff7272;
-      --green: #6fe39d;
-      --green-2: #4fce7d;
-      --shadow: rgba(0,0,0,0.38);
-      --table-head: rgba(255,255,255,0.04);
+      --panel-2: #172731;
+      --line: rgba(255,255,255,0.1);
+      --text: #eef6ff;
+      --muted: #a0afbf;
+      --teal: #5dd8c2;
+      --teal-strong: #2fb3a8;
+      --blue: #7bb4ff;
+      --green: #74e3a1;
+      --amber: #f0c67e;
+      --red: #ff7b7b;
+      --violet: #b99dff;
+      --shadow: rgba(0,0,0,0.28);
     }
 
     * { box-sizing: border-box; }
-    html, body { height: 100%; }
+    html, body { margin: 0; height: 100%; }
     body {
-      margin: 0;
-      background:
-        radial-gradient(circle at 15% 20%, rgba(128,190,255,0.18), transparent 20%),
-        linear-gradient(135deg, #e6a469 0%, #b9c7d6 22%, #7aa9d9 52%, #5f8bc0 100%);
-      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      font-family: Inter, "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #c5b7a8 0%, #bad1e3 24%, #7fa4d7 55%, #4f799f 100%);
       color: var(--text);
     }
 
     .shell {
       max-width: 1480px;
-      margin: 32px auto;
-      background: rgba(7, 13, 18, 0.82);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 26px;
-      box-shadow: 0 36px 80px rgba(8, 16, 24, 0.35);
+      margin: 24px auto;
+      border-radius: 22px;
       overflow: hidden;
-      backdrop-filter: blur(6px);
+      border: 1px solid var(--line);
+      background: rgba(9,15,20,0.86);
+      box-shadow: 0 28px 60px var(--shadow);
+      backdrop-filter: blur(5px);
     }
 
     .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 18px;
-      padding: 18px 22px 16px;
-      background: rgba(14, 20, 26, 0.85);
+      padding: 16px 20px;
       border-bottom: 1px solid var(--line);
+      background: rgba(18,29,39,0.9);
     }
 
     .brand {
       display: flex;
       align-items: center;
       gap: 12px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
+      font-weight: 800;
+      letter-spacing: -0.03em;
     }
 
     .brand-mark {
-      width: 24px; height: 24px; border-radius: 8px;
-      background: linear-gradient(135deg, #6fe39d, #2a8a7d);
+      width: 22px; height: 22px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--teal), #2b997c);
       position: relative;
     }
     .brand-mark::before {
       content: "";
       position: absolute;
       inset: 5px;
-      border-radius: 4px;
+      border-radius: 5px;
       border: 2px solid rgba(255,255,255,0.8);
       border-top-color: transparent;
       border-left-color: transparent;
       transform: rotate(45deg);
     }
 
-    .title-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .eyebrow {
-      font-size: 11px;
-      color: var(--muted);
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-    }
-
-    .title {
-      font-size: clamp(1.5rem, 2vw, 2.3rem);
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      margin: 0;
-    }
+    .eyebrow { font-size: 10px; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; }
+    .title { font-size: 15px; }
 
     .top-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--muted);
-      font-size: 14px;
+      display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 12px;
     }
-
-    .top-actions .date { white-space: nowrap; }
-    .notif, .avatar {
-      width: 34px; height: 34px;
-      border-radius: 12px;
+    .chip {
       border: 1px solid var(--line);
-      background: rgba(255,255,255,0.04);
-      display: grid;
-      place-items: center;
-      font-size: 16px;
-    }
-    .avat {
-      width: 34px; height: 34px; border-radius: 50%;
-      background: linear-gradient(135deg, #d4d9de, #66727d);
-      position: relative;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.18);
-    }
-    .avat::before {
-      content: "";
-      position: absolute;
-      inset: 8px 9px 12px;
-      border-radius: 50%;
-      background: #7e5d48;
-      box-shadow: 0 11px 0 8px #cab394;
+      background: rgba(255,255,255,0.03);
+      border-radius: 999px;
+      padding: 6px 10px;
     }
 
     .layout {
       display: grid;
-      grid-template-columns: 310px minmax(0, 1fr) 360px;
-      gap: 18px;
-      padding: 18px;
+      grid-template-columns: 330px minmax(0, 1fr) 360px;
+      gap: 12px;
+      padding: 12px;
+      min-height: 860px;
     }
 
     .panel {
-      background: rgba(18, 29, 39, 0.85);
+      background: rgba(18,29,39,0.9);
       border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 16px;
-      min-width: 0;
+      border-radius: 16px;
+      padding: 12px;
     }
 
-    .control-group + .control-group { margin-top: 18px; }
-
+    .side-section { margin-bottom: 18px; }
     .section-label {
-      font-size: 11px;
-      letter-spacing: 0.12em;
+      font-size: 10px;
       text-transform: uppercase;
+      letter-spacing: 0.12em;
       color: var(--muted);
       font-weight: 700;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 12px;
+    .field { margin-top: 10px; }
+    .field label { display: block; margin-bottom: 7px; color: var(--muted); font-size: 12px; }
+    .field .val {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 11px; color: var(--muted);
     }
-    .field label {
-      font-size: 13px;
-      color: var(--muted);
-      font-weight: 600;
-    }
+    .field .val strong { color: var(--text); font-size: 12px; }
 
     .input-wrap {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      display: flex; align-items: center; gap: 8px;
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: 10px;
       background: rgba(255,255,255,0.02);
-      padding: 0 10px 0 14px;
-      height: 44px;
+      padding: 0 10px 0 12px;
+      height: 40px;
     }
     .input-wrap input {
-      flex: 1;
-      border: 0;
-      background: transparent;
-      color: var(--text);
-      font-size: 18px;
-      font-weight: 700;
-      outline: none;
-      letter-spacing: -0.02em;
+      width: 100%; border: 0; background: transparent; color: var(--text);
+      font-size: 16px; font-weight: 700; outline: none;
     }
-    .input-wrap span { color: var(--muted-2); font-size: 12px; }
+    .input-wrap span { font-size: 11px; color: var(--muted); }
 
-    input[type="range"] {
-      width: 100%;
-      accent-color: var(--teal);
+    input[type="range"] { width: 100%; accent-color: var(--teal); }
+    .toggle-row {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 8px; padding: 7px 8px; border-radius: 10px; border: 1px solid var(--line);
+      background: rgba(255,255,255,0.02);
     }
 
     .road-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;
     }
-
     .road-option {
-      border: 1px solid var(--line);
-      border-radius: 12px;
       background: rgba(255,255,255,0.02);
-      padding: 10px 10px 8px;
-      cursor: pointer;
-      transition: 0.12s ease;
+      border: 1px solid var(--line); border-radius: 10px;
+      padding: 10px 8px; cursor: pointer; transition: 0.15s ease;
     }
     .road-option.active {
-      background: rgba(89, 215, 193, 0.12);
-      border-color: rgba(89, 215, 193, 0.4);
-      box-shadow: inset 0 -2px 0 rgba(89, 215, 193, 0.4);
+      border-color: rgba(93,216,194,0.55);
+      background: rgba(93,216,194,0.12);
+      box-shadow: inset 0 -2px 0 rgba(93,216,194,0.45);
     }
-    .road-option strong { display: block; font-size: 18px; font-weight: 800; letter-spacing: -0.04em; }
-    .road-option small { color: var(--muted); font-size: 11px; }
+    .road-option strong { display: block; font-size: 18px; letter-spacing: -0.04em; }
+    .road-option small { color: var(--muted); }
 
     .segmented {
-      display: flex;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      overflow: hidden;
-      background: rgba(255,255,255,0.02);
+      display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 6px;
     }
     .segmented button {
-      flex: 1;
-      appearance: none;
-      border: 0;
-      background: transparent;
-      color: var(--muted);
-      padding: 9px 6px;
-      font-weight: 700;
-      cursor: pointer;
+      background: rgba(255,255,255,0.02); color: var(--muted); border: 1px solid var(--line);
+      padding: 8px 6px; border-radius: 9px; font-weight: 700; cursor: pointer;
     }
     .segmented button.active {
-      background: rgba(89, 215, 193, 0.14);
-      color: var(--text);
-      box-shadow: inset 0 -2px 0 rgba(89, 215, 193, 0.55);
+      color: var(--text); background: rgba(93,216,194,0.12); border-color: rgba(93,216,194,0.5);
     }
 
     .mini-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
+      width: 100%; border-collapse: collapse; font-size: 12px;
     }
-
     .mini-table th, .mini-table td {
-      border-bottom: 1px solid var(--line);
-      padding: 8px 0;
-      text-align: left;
-      font-size: 12px;
+      padding: 7px 0; text-align: left; border-bottom: 1px solid var(--line);
     }
-    .mini-table th {
-      color: var(--muted);
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      font-weight: 700;
-    }
-    .mini-table td.value {
-      text-align: right;
-      font-weight: 700;
-      color: var(--text);
-      letter-spacing: -0.02em;
-    }
+    .mini-table th { color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; font-size: 10px; }
+    .mini-table td { text-align: right; font-weight: 700; }
 
     .main-panel {
       display: grid;
       grid-template-rows: auto auto auto;
-      gap: 18px;
+      gap: 12px;
       min-width: 0;
     }
 
-    .hero {
-      background: rgba(18, 29, 39, 0.9);
+    .section-card {
+      background: rgba(18,29,39,0.9);
       border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 18px 18px 16px;
+      border-radius: 16px;
+      padding: 14px 16px;
     }
 
     .hero-header {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 16px;
+      display: flex; justify-content: space-between; align-items: end; gap: 12px; margin-bottom: 10px;
     }
-
-    .hero-header h2 {
-      font-size: clamp(2rem, 2.6vw, 3rem);
-      margin: 0;
-      letter-spacing: -0.06em;
-      font-weight: 800;
-      line-height: 1;
+    .hero-header h2 { margin: 0; font-size: clamp(24px, 3vw, 38px); letter-spacing: -0.06em; }
+    .hero-header .accent { color: var(--teal); }
+    .badge {
+      border-radius: 999px; padding: 5px 8px; font-size: 11px; font-weight: 700;
+      border: 1px solid rgba(93,216,194,0.4); background: rgba(93,216,194,0.12); color: var(--teal);
     }
-    .hero-header h2 .accent { color: var(--teal); }
 
     .hero-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.8fr);
-      gap: 16px;
+      display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(220px, 0.8fr); gap: 12px; align-items: stretch;
     }
 
     .scene {
-      position: relative;
-      border-radius: 18px;
-      background: linear-gradient(180deg, rgba(12,16,20,0.9), rgba(12,18,23,0.95));
-      border: 1px solid var(--line);
-      height: 420px;
-      overflow: hidden;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+      position: relative; height: 430px; border-radius: 16px; background: linear-gradient(180deg, rgba(10,16,19,0.9), rgba(13,21,27,0.96));
+      border: 1px solid var(--line); overflow: hidden;
     }
-
-    .scene::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at 40% 28%, rgba(97,214,180,0.12), transparent 22%),
-        linear-gradient(180deg, rgba(255,255,255,0.01), transparent 30%);
+    .scene svg { width: 100%; height: 100%; display: block; }
+    .scene-label {
+      position: absolute; left: 14px; right: 14px; bottom: 12px; display: flex; justify-content: space-between; font-size: 11px; color: var(--muted);
       pointer-events: none;
     }
 
-    .base-layer {
-      position: absolute;
-      inset: 18px 20px 22px 20px;
-      border-radius: 18px;
-      background: linear-gradient(135deg, rgba(27,62,57,0.8), rgba(15,28,27,0.9));
-      transform: perspective(1200px) rotateX(68deg) rotateZ(-22deg);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), 0 30px 32px rgba(0,0,0,0.18);
-      border: 1px solid rgba(99, 224, 193, 0.14);
-    }
-
-    .podium {
-      position: absolute;
-      left: 24%; right: 22%; bottom: 18%; height: 24%;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: linear-gradient(180deg, rgba(116,151,171,.8), rgba(45,69,82,.95));
-      transform: perspective(1200px) rotateX(66deg) rotateZ(-22deg);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
-    }
-
-    .tower {
-      position: absolute;
-      width: 86px;
-      height: 150px;
-      border-radius: 8px 8px 0 0;
-      border: 1px solid rgba(255,255,255,0.12);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08), 0 15px 25px rgba(0,0,0,0.18);
-      background: linear-gradient(180deg, rgba(99,158,255,0.9), rgba(46,81,138,0.86));
-    }
-    .tower::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(
-        180deg,
-        rgba(255,255,255,0.12),
-        rgba(255,255,255,0.12) 12px,
-        rgba(255,255,255,0) 12px,
-        rgba(255,255,255,0) 20px
-      );
-      opacity: 0.5;
-    }
-    .tower.t1 { left: 35%; bottom: 23%; }
-    .tower.t2 { left: 48%; bottom: 27%; width: 72px; height: 122px; background: linear-gradient(180deg, rgba(105,228,176,0.92), rgba(41,113,81,0.82)); }
-    .tower.t3 { left: 60%; bottom: 25%; width: 82px; height: 136px; background: linear-gradient(180deg, rgba(255,176,87,0.9), rgba(156,102,35,0.86)); }
-
-    .scene-label {
-      position: absolute;
-      bottom: 12px;
-      left: 18px;
-      right: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      color: var(--muted);
-      font-size: 12px;
-      z-index: 2;
-    }
-
     .summary-box {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+      display: grid; grid-template-rows: repeat(3, minmax(0,1fr)); gap: 10px;
     }
-
     .stat-card {
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.02);
-      border-radius: 16px;
-      padding: 12px 14px;
-      min-height: 96px;
+      border-radius: 14px; border: 1px solid var(--line); background: rgba(255,255,255,0.02); padding: 12px 14px;
     }
     .stat-card .k {
-      color: var(--muted);
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-      font-weight: 700;
+      color: var(--muted); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700;
     }
     .stat-card .v {
-      font-size: clamp(1.6rem, 3vw, 2.2rem);
-      font-weight: 800;
-      letter-spacing: -0.06em;
-      line-height: 1.05;
+      font-size: clamp(22px, 3vw, 32px); font-weight: 800; letter-spacing: -0.06em; margin-top: 8px;
     }
-    .stat-card .v small {
-      font-size: 11px;
-      color: var(--muted);
-      margin-left: 4px;
-      letter-spacing: 0.02em;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 700;
-      background: rgba(89,215,193,0.12);
-      color: var(--teal);
-      border: 1px solid rgba(89,215,193,0.25);
-      margin-top: 8px;
-    }
-
-    .inline-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .section-card {
-      background: rgba(18, 29, 39, 0.9);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 16px;
-    }
+    .stat-card .v small { font-size: 12px; color: var(--muted); }
 
     .section-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 12px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px;
     }
-    .section-head h3 {
-      margin: 0;
-      font-size: 18px;
-      letter-spacing: -0.03em;
-    }
-
-    .low-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 18px;
-    }
-
-    .matrix-wrap {
-      overflow: auto;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: rgba(255,255,255,0.02);
-    }
-
-    table.data-table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 560px;
-      font-size: 12px;
-      background: rgba(255,255,255,0.01);
-    }
-    table.data-table thead th {
-      position: sticky;
-      top: 0;
-      background: rgba(18,29,39,0.98);
-      color: var(--muted);
-      border-bottom: 1px solid var(--line);
-      padding: 10px 8px;
-      font-size: 10px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      font-weight: 700;
-      text-align: right;
-    }
-    table.data-table thead th:first-child,
-    table.data-table tbody td:first-child { text-align: left; }
-    table.data-table tbody td {
-      border-bottom: 1px solid var(--line);
-      padding: 8px 8px;
-      text-align: right;
-      white-space: nowrap;
-      color: var(--text);
-      font-variant-numeric: tabular-nums;
-    }
-    table.data-table tbody tr:hover td {
-      background: rgba(255,255,255,0.02);
-    }
-    .win-cell {
-      color: var(--green);
-      font-weight: 700;
-    }
-    .warn-cell {
-      color: var(--amber);
-      font-weight: 700;
-    }
-    .bad-cell {
-      color: var(--red);
-      font-weight: 700;
-    }
-
-    .side-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .metric-box {
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.02);
-      border-radius: 16px;
-      padding: 12px 14px;
-    }
-    .metric-box .head {
-      color: var(--muted);
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-    .metric-box .big {
-      font-size: 2rem;
-      font-weight: 800;
-      letter-spacing: -0.06em;
-      line-height: 1;
-    }
-    .metric-box .sub {
-      color: var(--muted);
-      margin-top: 8px;
-      font-size: 12px;
-    }
+    .section-head h3 { margin: 0; font-size: 18px; letter-spacing: -0.03em; }
+    .pill { border: 1px solid var(--line); border-radius: 999px; padding: 5px 9px; font-size: 11px; font-weight: 700; }
+    .pill.green { color: var(--green); background: rgba(116,227,161,0.08); border-color: rgba(116,227,161,0.2); }
+    .pill.blue { color: var(--blue); background: rgba(123,180,255,0.08); border-color: rgba(123,180,255,0.2); }
 
     .deal-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
+      display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0;
     }
     .deal-button {
-      appearance: none;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: rgba(255,255,255,0.02);
-      color: var(--text);
-      padding: 7px 10px;
-      font-weight: 700;
-      font-size: 12px;
-      cursor: pointer;
+      background: rgba(255,255,255,0.02); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 7px 10px; font-weight: 700; cursor: pointer;
     }
     .deal-button.active {
-      background: rgba(89,215,193,0.12);
-      border-color: rgba(89,215,193,0.35);
-      color: var(--teal);
+      background: rgba(93,216,194,0.12); border-color: rgba(93,216,194,0.45); color: var(--teal);
     }
 
-    .note {
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.5;
-      margin-top: 12px;
+    .metrics-grid {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;
+    }
+    .metric-box {
+      border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,0.02); padding: 12px 14px;
+    }
+    .metric-box .head { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; }
+    .metric-box .big { margin-top: 8px; font-size: 28px; font-weight: 800; letter-spacing: -0.05em; }
+    .metric-box .sub { margin-top: 8px; color: var(--muted); font-size: 12px; }
+
+    .low-grid {
+      display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 12px;
+      align-items: start;
+    }
+    .matrix-wrap { overflow: auto; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,0.02); }
+    table.data-table {
+      width: 100%; border-collapse: collapse; min-width: 520px; font-size: 12px;
+    }
+    table.data-table th, table.data-table td {
+      border-bottom: 1px solid var(--line); padding: 8px 8px; text-align: right; white-space: nowrap;
+    }
+    table.data-table th:first-child, table.data-table td:first-child { text-align: left; }
+    table.data-table th { color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; font-size: 10px; }
+    .win { color: var(--green); font-weight: 700; }
+    .warn { color: var(--amber); font-weight: 700; }
+    .bad { color: var(--red); font-weight: 700; }
+
+    .row-list {
+      max-height: 260px; overflow: auto;
+      border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,0.02);
+    }
+    .row-list table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .row-list th, .row-list td { padding: 8px 8px; border-bottom: 1px solid var(--line); }
+    .row-list th { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+    .row-list tbody tr { cursor: pointer; }
+    .row-list tbody tr:hover { background: rgba(255,255,255,0.02); }
+    .row-list tbody tr.selected { background: rgba(93,216,194,0.12); }
+    .status-pill {
+      display: inline-block; padding: 3px 7px; border-radius: 999px; font-size: 10px; font-weight: 700; border: 1px solid var(--line);
+    }
+    .status-pill.ok { color: var(--green); border-color: rgba(116,227,161,0.3); background: rgba(116,227,161,0.08); }
+    .status-pill.warn { color: var(--amber); border-color: rgba(240,198,126,0.3); background: rgba(240,198,126,0.08); }
+    .status-pill.bad { color: var(--red); border-color: rgba(255,123,123,0.3); background: rgba(255,123,123,0.08); }
+
+    .controls-inline { display: flex; gap: 8px; }
+    button.primary {
+      background: rgba(93,216,194,0.12); border: 1px solid rgba(93,216,194,0.45); color: var(--teal); border-radius: 10px; padding: 8px 12px; font-weight: 700; cursor: pointer;
+    }
+    button.secondary {
+      background: rgba(255,255,255,0.02); border: 1px solid var(--line); color: var(--text); border-radius: 10px; padding: 8px 12px; font-weight: 700; cursor: pointer;
     }
 
-    .pill-strip {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 12px;
-    }
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 5px 9px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.02);
-      font-size: 11px;
-      color: var(--muted);
-      font-weight: 700;
-    }
-    .pill.green { color: var(--green); background: rgba(111,227,157,0.08); border-color: rgba(111,227,157,0.24); }
-    .pill.amber { color: var(--amber); background: rgba(255,191,105,0.08); border-color: rgba(255,191,105,0.24); }
-    .pill.red { color: var(--red); background: rgba(255,114,114,0.08); border-color: rgba(255,114,114,0.22); }
-    .pill.blue { color: var(--blue); background: rgba(115,185,255,0.08); border-color: rgba(115,185,255,0.24); }
-
-    @media (max-width: 1180px) {
+    @media (max-width: 1100px) {
       .layout { grid-template-columns: 1fr; }
       .main-panel { order: 1; }
       .low-grid { grid-template-columns: 1fr; }
-    }
-
-    @media (max-width: 740px) {
-      .shell { margin: 12px; border-radius: 18px; }
-      .topbar { flex-wrap: wrap; }
       .hero-grid { grid-template-columns: 1fr; }
-      .inline-grid { grid-template-columns: 1fr; }
-      .road-grid { grid-template-columns: 1fr; }
-      .layout { padding: 12px; }
     }
   </style>
 </head>
 <body>
   <div class="shell">
-    <div class="topbar">
+    <header class="topbar">
       <div class="brand">
         <div class="brand-mark"></div>
-        <div class="title-wrap">
+        <div>
           <div class="eyebrow">Wadala East</div>
-          <div style="font-size: 14px; font-weight: 800; letter-spacing: -0.02em;">Plot + Finance Console</div>
+          <div class="title">FBC Plot + Finance Simulator</div>
         </div>
       </div>
-
       <div class="top-actions">
-        <div class="date">Wed, 29 May 2024</div>
-        <div class="notif">🔔</div>
-        <div class="avat" title="Profile"></div>
+        <span class="chip">ROW: <strong id="headerRow">45 m</strong></span>
+        <span class="chip">Selected: <strong id="headerSelected">None</strong></span>
       </div>
-    </div>
+    </header>
 
     <div class="layout">
       <aside class="panel">
-        <div class="section-label">Control panel</div>
-
-        <div class="control-group">
+        <div class="side-section">
+          <div class="section-label">Plot controls</div>
           <div class="field">
             <label>Plot area</label>
             <div class="input-wrap">
-              <input id="plotArea" type="number" value="5800" min="1000" max="30000" step="50" />
+              <input id="plotArea" type="number" min="1000" max="25000" step="50" value="5800" />
               <span>sqm</span>
             </div>
-            <input id="areaRange" type="range" min="1000" max="30000" step="100" value="5800" />
+            <input id="areaSlider" type="range" min="1000" max="25000" step="50" value="5800" />
           </div>
         </div>
 
-        <div class="control-group">
-          <div class="section-label" style="margin-bottom: 8px;">Road frontage</div>
-          <div class="road-grid" id="roadOptions"></div>
-          <div class="field" style="margin-top: 10px;">
-            <label>Custom road width</label>
-            <div class="input-wrap" style="height: 38px;">
-              <input id="customRoad" type="number" value="45" min="6" step="1" placeholder="e.g. 30" />
+        <div class="side-section">
+          <div class="section-label">Road frontage</div>
+          <div class="road-grid" id="roadGrid"></div>
+          <div class="field">
+            <label>Custom ROW</label>
+            <div class="input-wrap">
+              <input id="customRow" type="number" min="12" step="1" value="45" />
               <span>m</span>
             </div>
           </div>
         </div>
 
-        <div class="control-group">
+        <div class="side-section">
           <div class="section-label">Design logic</div>
-          <div class="field">
-            <label>Optimise for</label>
-            <div class="segmented" id="objectiveSeg">
-              <button class="active" data-objective="profit">Profit</button>
-              <button data-objective="npv">NPV</button>
-              <button data-objective="irr">IRR</button>
-            </div>
+          <div class="segmented" id="objectiveSeg">
+            <button class="active" data-objective="profit">Profit</button>
+            <button data-objective="npv">NPV</button>
+            <button data-objective="irr">IRR</button>
           </div>
         </div>
 
-        <div class="control-group">
-          <div class="section-label">Model assumptions</div>
-          <table class="mini-table">
-            <tbody>
-              <tr><th>Base FSI</th><td class="value">1.33</td></tr>
-              <tr><th>Premium FSI</th><td class="value">0.50</td></tr>
-              <tr><th>Fungible</th><td class="value">35%</td></tr>
-              <tr><th>Developer band</th><td class="value">20–25%</td></tr>
-            </tbody>
-          </table>
+        <div class="side-section">
+          <div class="section-label">Regulations</div>
+          <div class="field">
+            <div class="val"><span>FSI</span><strong id="val_fsi">3.50</strong></div>
+            <input id="s_fsi" type="range" min="0.5" max="5" step="0.05" value="3.5" />
+          </div>
+          <div class="field">
+            <div class="val"><span>Height</span><strong id="val_h">70 m</strong></div>
+            <input id="s_h" type="range" min="20" max="120" step="1" value="70" />
+          </div>
+          <div class="field">
+            <div class="val"><span>Front setback</span><strong id="val_front">4 m</strong></div>
+            <input id="s_front" type="range" min="1" max="15" step="0.5" value="4" />
+          </div>
+          <div class="field">
+            <div class="val"><span>Side setback</span><strong id="val_side">4 m</strong></div>
+            <input id="s_side" type="range" min="1" max="15" step="0.5" value="4" />
+          </div>
+          <div class="field">
+            <div class="val"><span>Footpath width</span><strong id="val_fp">3.5 m</strong></div>
+            <input id="s_fp" type="range" min="1" max="8" step="0.1" value="3.5" />
+          </div>
+          <div class="field">
+            <div class="val"><span>MUZ / utility strip</span><strong id="val_muz">0.0 m</strong></div>
+            <input id="s_muz" type="range" min="0" max="8" step="0.5" value="0" />
+          </div>
+          <div class="field">
+            <div class="val"><span>Active frontage</span><strong id="val_act">60%</strong></div>
+            <input id="s_act" type="range" min="10" max="100" step="1" value="60" />
+          </div>
+          <div class="field">
+            <div class="val"><span>Ground-floor transparency</span><strong id="val_trans">50%</strong></div>
+            <input id="s_trans" type="range" min="10" max="100" step="1" value="50" />
+          </div>
+          <div class="field">
+            <div class="val"><span>Green proportion</span><strong id="val_green">30%</strong></div>
+            <input id="s_green" type="range" min="0" max="60" step="1" value="30" />
+          </div>
+          <div class="field">
+            <div class="val"><span>Leftover / movement</span><strong id="val_left">20%</strong></div>
+            <input id="s_left" type="range" min="0" max="50" step="1" value="20" />
+          </div>
+          <div class="toggle-row">
+            <span>Build-to-line</span>
+            <input id="s_btl" type="checkbox" checked />
+          </div>
         </div>
       </aside>
 
       <main class="main-panel">
-        <section class="hero">
+        <section class="section-card">
           <div class="hero-header">
             <h2>Wadala plot <span class="accent">simulation</span></h2>
-            <div class="badge">Win-win model active</div>
+            <div class="badge">Design alignment active</div>
           </div>
-
           <div class="hero-grid">
-            <div class="scene" aria-label="3D plot simulation">
-              <div class="base-layer"></div>
-              <div class="podium"></div>
-              <div class="tower t1"></div>
-              <div class="tower t2"></div>
-              <div class="tower t3"></div>
+            <div class="scene">
+              <svg id="siteSvg" viewBox="0 0 820 430" preserveAspectRatio="xMidYMid meet"></svg>
               <div class="scene-label">
-                <span>Plot area: <strong id="sceneAreaLabel">5,800 sqm</strong></span>
-                <span>Road ROW: <strong id="sceneRoadLabel">45 m</strong></span>
+                <span>Plot area: <strong id="sceneArea">5,800 sqm</strong></span>
+                <span>Governing ROW: <strong id="sceneRow">45 m</strong></span>
               </div>
             </div>
 
@@ -737,45 +443,42 @@
         <section class="section-card">
           <div class="section-head">
             <h3>Live deal options</h3>
-            <div class="pill green">Current verdict: WIN-WIN</div>
+            <span class="pill green">Current verdict: win-win</span>
           </div>
-
           <div class="deal-buttons" id="dealButtons"></div>
-
-          <div class="inline-grid" style="margin-top: 14px;">
+          <div class="metrics-grid">
             <div class="metric-box">
               <div class="head">Charge defer</div>
               <div class="big" id="deferValue">0%</div>
-              <div class="sub">Statutory charges moved to completion.</div>
+              <div class="sub">Statutory charges shifted to completion.</div>
             </div>
             <div class="metric-box">
               <div class="head">Infrastructure levy</div>
               <div class="big" id="levyValue">0%</div>
-              <div class="sub">Revenue shared with infrastructure package.</div>
+              <div class="sub">Public share from infrastructure contribution.</div>
             </div>
           </div>
         </section>
 
         <section class="section-card">
           <div class="section-head">
-            <h3>Wadala East win-win matrix</h3>
-            <div class="pill blue">CSV-backed</div>
+            <h3>All plots KPI summary</h3>
+            <span class="pill blue">Plot-wise</span>
           </div>
-
           <div class="low-grid">
             <div class="matrix-wrap">
-              <table class="data-table" id="matrixGrid"></table>
+              <table class="data-table" id="plotKpiTable"></table>
             </div>
             <div class="side-stack">
               <div class="metric-box">
                 <div class="head">City NPV</div>
                 <div class="big" id="cityNpvValue">₹ 514<small>Cr</small></div>
-                <div class="sub">Public balance after infrastructure obligations.</div>
+                <div class="sub">Public balance after obligations.</div>
               </div>
               <div class="metric-box">
                 <div class="head">Economic NPV</div>
                 <div class="big" id="econValue">₹ 130<small>Cr</small></div>
-                <div class="sub">Value to people and users.</div>
+                <div class="sub">Total social and user value.</div>
               </div>
               <div class="metric-box">
                 <div class="head">Recommendation</div>
@@ -787,170 +490,206 @@
       </main>
 
       <aside class="panel">
-        <div class="section-label">Finance snapshot</div>
-
-        <div class="metric-box">
-          <div class="head">Lowest phase developer IRR</div>
-          <div class="big">22.4%</div>
-          <div class="sub">Base case, project-level return.</div>
+        <div class="side-section">
+          <div class="section-label">Actions</div>
+          <div class="controls-inline">
+            <button class="primary" id="designWholeSite">Design whole site</button>
+            <button class="secondary" id="blankSite">Blank site</button>
+          </div>
+          <div class="controls-inline" style="margin-top:8px;">
+            <button class="secondary" id="deselectPlot">Deselect plot</button>
+            <button class="secondary" id="resetPlot">Reset plot</button>
+          </div>
         </div>
 
-        <div class="metric-box" style="margin-top: 12px;">
-          <div class="head">Developer NPV @12%</div>
-          <div class="big">₹ 2,380<small style="font-size:12px; color: var(--muted);">Cr</small></div>
-          <div class="sub">Today’s money, current base inputs.</div>
+        <div class="side-section">
+          <div class="section-label">All plots</div>
+          <div class="row-list">
+            <table>
+              <thead>
+                <tr><th>Plot</th><th>ROW</th><th>Status</th></tr>
+              </thead>
+              <tbody id="plotList"></tbody>
+            </table>
+          </div>
         </div>
 
-        <div class="metric-box" style="margin-top: 12px;">
-          <div class="head">Whole-government NPV @8%</div>
-          <div class="big">₹ 4,338<small style="font-size:12px; color: var(--muted);">Cr</small></div>
-          <div class="sub">Public fiscal value over the project life.</div>
+        <div class="side-section">
+          <div class="section-label">Selected plot detail</div>
+          <div id="selectedPlotPanel" class="metric-box">
+            <div class="head">No plot selected</div>
+            <div class="sub">Choose a plot from the site plan or list.</div>
+          </div>
         </div>
 
-        <div class="pill-strip">
-          <span class="pill green">Win-win</span>
-          <span class="pill amber">Developer in band</span>
-          <span class="pill blue">Government positive</span>
-        </div>
-
-        <div class="section-label" style="margin-top: 18px;">Stress test</div>
-        <div class="matrix-wrap" style="margin-top: 8px; max-height: 220px;">
-          <table class="data-table" id="stressGrid"></table>
+        <div class="side-section">
+          <div class="section-label">Finance snapshot</div>
+          <div class="metric-box" style="margin-bottom:8px;">
+            <div class="head">Lowest phase developer IRR</div>
+            <div class="big" style="font-size: 26px;">22.4%</div>
+            <div class="sub">Base case return.</div>
+          </div>
+          <div class="metric-box" style="margin-bottom:8px;">
+            <div class="head">Developer NPV @12%</div>
+            <div class="big" style="font-size: 26px;">₹ 2,380<small style="font-size:12px;color:var(--muted);">Cr</small></div>
+            <div class="sub">Current assumptions.</div>
+          </div>
+          <div class="metric-box">
+            <div class="head">Whole-government NPV @8%</div>
+            <div class="big" style="font-size: 26px;">₹ 4,338<small style="font-size:12px;color:var(--muted);">Cr</small></div>
+            <div class="sub">Public value over the project life.</div>
+          </div>
         </div>
       </aside>
     </div>
   </div>
 
   <script>
-    const roadRules = {
-      45: { name: 'Primary commercial', fsi: 4.0, height: 85, setback: 6, podium: 'G+5P', activeFrontage: 70 },
-      24: { name: 'Secondary mixed-use', fsi: 3.5, height: 70, setback: 4, podium: 'G+5P', activeFrontage: 60 },
-      18: { name: 'Neighbourhood mixed-use', fsi: 3.0, height: 55, setback: 3, podium: 'None', activeFrontage: 50 },
-      12: { name: 'Local residential', fsi: 2.5, height: 40, setback: 2, podium: 'None', activeFrontage: 30 }
+    const rowRules = {
+      45: { name: 'Primary commercial', fsi: 4.0, height: 85, setback: 6, footpath: 3.5, muz: 0, active: 70, transparency: 60, green: 30, left: 20, btl: true },
+      24: { name: 'Secondary mixed-use', fsi: 3.5, height: 70, setback: 4, footpath: 4.0, muz: 0, active: 60, transparency: 50, green: 30, left: 20, btl: true },
+      18: { name: 'Neighbourhood mixed-use', fsi: 3.0, height: 55, setback: 3, footpath: 3.0, muz: 0, active: 50, transparency: 40, green: 20, left: 20, btl: false },
+      12: { name: 'Local residential', fsi: 2.5, height: 40, setback: 2, footpath: 1.8, muz: 0, active: 30, transparency: 30, green: 20, left: 20, btl: false }
     };
 
-    const snapshot = {
-      base: { defer: 0, levy: 0, irr: 22.4, npv: 2380, gov: 4338, city: 514, econ: 130, verdict: 'WIN-WIN' },
-      inBand: { defer: 35, levy: 0.75, irr: 24.1, npv: 2394, gov: 4485, city: 540, econ: 150, verdict: 'WIN-WIN' },
-      publicMax: { defer: 100, levy: 2.25, irr: 29.5, npv: 2405, gov: 4781, city: 610, econ: 190, verdict: 'WIN-WIN' },
-      developerFloor: { defer: 0, levy: 3.75, irr: 20.1, npv: 1849, gov: 5076, city: 620, econ: 170, verdict: 'WATCH' }
+    const financeModel = {
+      assumptions: {
+        baseFsi: 1.33,
+        premiumRate: 0.5,
+        tdrPrice: 62000,
+        asrLandValue: 111019,
+        saleRes: 37700,
+        saleCom: 38000,
+        costRes: 62000,
+        costCom: 77000,
+        discRate: 0.12,
+        finRate: 0.11,
+        infraShare: 0.25
+      },
+      calculate(plot, metrics) {
+        const area = plot.area || 5800;
+        const fsi = Number(metrics.fsi || 3.5);
+        const built = area * fsi;
+        const sales = (built * 0.7 * this.assumptions.saleRes) / 1000000;
+        const costs = (built * 0.55 * this.assumptions.costRes) / 1000000;
+        const npv = (sales - costs) * (1 + (plot.row - 12) * 0.04);
+        const irr = 16 + (fsi - 2.5) * 4.2 + (plot.row === 45 ? 2.0 : plot.row === 24 ? 1.3 : plot.row === 18 ? 0.6 : 0.2);
+        return {
+          npv: Math.max(1200, npv / 1000),
+          irr: Math.min(35, Math.max(14, irr)),
+          gov: Math.max(3200, npv * 1.4),
+          city: Math.max(250, npv * 0.32),
+          econ: Math.max(80, npv * 0.17)
+        };
+      }
     };
 
-    const grid1 = [
-      ['-', 22.4, 23.9, 25.9, 28.4, 31.7],
-      ['1.0%', 21.8, 23.3, 25.1, 27.6, 30.7],
-      ['2.0%', 21.2, 22.6, 24.4, 26.7, 29.8],
-      ['3.0%', 20.5, 21.9, 23.7, 25.9, 28.8],
-      ['4.0%', 19.9, 21.2, 22.9, 25.0, 27.8],
-      ['5.0%', 19.3, 20.6, 22.1, 24.2, 26.9]
+    const allDeals = {
+      base: { defer: 0, levy: 0, irr: 22.4, npv: 2380, gov: 4338, city: 514, econ: 130 },
+      inBand: { defer: 35, levy: 0.75, irr: 24.1, npv: 2394, gov: 4485, city: 540, econ: 150 },
+      publicMax: { defer: 100, levy: 2.25, irr: 29.5, npv: 2405, gov: 4781, city: 610, econ: 190 },
+      developerFloor: { defer: 0, levy: 3.75, irr: 20.1, npv: 1849, gov: 5076, city: 620, econ: 170 }
+    };
+
+    const plotData = [
+      { id: 'P01', row: 45, area: 6400, x: 70, y: 70, w: 180, h: 166, action: 'Redevelop' },
+      { id: 'P02', row: 24, area: 5400, x: 280, y: 70, w: 170, h: 166, action: 'Redevelop' },
+      { id: 'P03', row: 18, area: 4800, x: 470, y: 70, w: 180, h: 166, action: 'Redevelop' },
+      { id: 'P04', row: 45, area: 7200, x: 70, y: 260, w: 210, h: 130, action: 'New Build' },
+      { id: 'P05', row: 12, area: 3900, x: 320, y: 260, w: 150, h: 130, action: 'Redevelop' },
+      { id: 'P06', row: 24, area: 5900, x: 500, y: 260, w: 170, h: 130, action: 'Redevelop' }
     ];
 
-    const grid2 = [
-      ['-', 2380, 2466, 2552, 2638, 2724],
-      ['1.0%', 2239, 2324, 2410, 2496, 2582],
-      ['2.0%', 2097, 2183, 2269, 2355, 2440],
-      ['3.0%', 1955, 2041, 2127, 2213, 2299],
-      ['4.0%', 1814, 1899, 1985, 2071, 2157],
-      ['5.0%', 1672, 1758, 1844, 1930, 2015]
-    ];
+    const state = {
+      objective: 'profit',
+      selectedPlotId: null,
+      activeRoad: 45,
+      activeDeal: 'inBand',
+      controls: {
+        area: 5800,
+        fsi: 3.5,
+        h: 70,
+        front: 4,
+        side: 4,
+        fp: 3.5,
+        muz: 0,
+        act: 60,
+        trans: 50,
+        green: 30,
+        left: 20,
+        btl: true
+      }
+    };
 
-    const grid3 = [
-      ['-', 4338, 4338, 4338, 4338, 4338],
-      ['1.0%', 4535, 4535, 4535, 4535, 4535],
-      ['2.0%', 4732, 4732, 4732, 4732, 4732],
-      ['3.0%', 4928, 4928, 4928, 4928, 4928],
-      ['4.0%', 5125, 5125, 5125, 5125, 5125],
-      ['5.0%', 5322, 5322, 5322, 5322, 5322]
-    ];
+    const els = {
+      plotArea: document.getElementById('plotArea'),
+      areaSlider: document.getElementById('areaSlider'),
+      customRow: document.getElementById('customRow'),
+      roadGrid: document.getElementById('roadGrid'),
+      plotList: document.getElementById('plotList'),
+      siteSvg: document.getElementById('siteSvg'),
+      sceneArea: document.getElementById('sceneArea'),
+      sceneRow: document.getElementById('sceneRow'),
+      selectedPlotPanel: document.getElementById('selectedPlotPanel'),
+      headerRow: document.getElementById('headerRow'),
+      headerSelected: document.getElementById('headerSelected'),
+      plotKpiTable: document.getElementById('plotKpiTable'),
+      dealButtons: document.getElementById('dealButtons'),
+      deferValue: document.getElementById('deferValue'),
+      levyValue: document.getElementById('levyValue'),
+      cityNpvValue: document.getElementById('cityNpvValue'),
+      econValue: document.getElementById('econValue'),
+      recommendationText: document.getElementById('recommendationText'),
+      irrValue: document.getElementById('irrValue'),
+      npvValue: document.getElementById('npvValue'),
+      govValue: document.getElementById('govValue')
+    };
 
-    const stressGrid = [
-      ['-15%', 16.4, 14.9, 13.5, 12.1, 10.7, 9.2],
-      ['-10%', 19.4, 18.0, 16.6, 15.2, 13.8, 12.4],
-      ['-5%', 22.2, 20.9, 19.5, 18.2, 16.8, 15.5],
-      ['0%', 25.0, 23.7, 22.4, 21.0, 19.7, 18.4],
-      ['+5%', 27.7, 26.4, 25.1, 23.8, 22.5, 21.2],
-      ['+10%', 30.3, 29.0, 27.7, 26.5, 25.2, 23.9]
-    ];
-
-    const roadButtons = document.getElementById('roadOptions');
-    const objectiveButtons = document.querySelectorAll('[data-objective]');
-    const plotAreaInput = document.getElementById('plotArea');
-    const areaRange = document.getElementById('areaRange');
-    const customRoadInput = document.getElementById('customRoad');
-    const sceneAreaLabel = document.getElementById('sceneAreaLabel');
-    const sceneRoadLabel = document.getElementById('sceneRoadLabel');
-    const irrValue = document.getElementById('irrValue');
-    const npvValue = document.getElementById('npvValue');
-    const govValue = document.getElementById('govValue');
-    const cityNpvValue = document.getElementById('cityNpvValue');
-    const econValue = document.getElementById('econValue');
-    const deferValue = document.getElementById('deferValue');
-    const levyValue = document.getElementById('levyValue');
-    const recommendationText = document.getElementById('recommendationText');
-    const dealButtonsWrap = document.getElementById('dealButtons');
-
-    let activeRoad = 45;
-    let activeDeal = 'inBand';
-
-    function formatCr(value) {
-      return `₹ ${Number(value).toLocaleString('en-IN')} Cr`;
+    function updateControlLabels() {
+      const c = state.controls;
+      document.getElementById('val_fsi').textContent = c.fsi.toFixed(2);
+      document.getElementById('val_h').textContent = c.h.toFixed(0) + ' m';
+      document.getElementById('val_front').textContent = c.front.toFixed(1) + ' m';
+      document.getElementById('val_side').textContent = c.side.toFixed(1) + ' m';
+      document.getElementById('val_fp').textContent = c.fp.toFixed(1) + ' m';
+      document.getElementById('val_muz').textContent = c.muz.toFixed(1) + ' m';
+      document.getElementById('val_act').textContent = c.act.toFixed(0) + '%';
+      document.getElementById('val_trans').textContent = c.trans.toFixed(0) + '%';
+      document.getElementById('val_green').textContent = c.green.toFixed(0) + '%';
+      document.getElementById('val_left').textContent = c.left.toFixed(0) + '%';
     }
 
-    function formatMoney(value) {
-      return `₹ ${Number(value).toLocaleString('en-IN')}`;
-    }
-
-    function getSelectedRoad() {
-      const custom = Number(customRoadInput.value || activeRoad);
-      if (custom && custom >= 6) return Math.max(12, custom <= 15 ? 12 : custom <= 20 ? 18 : custom <= 30 ? 24 : 45);
-      return activeRoad;
-    }
-
-    function simulate() {
-      const area = Number(plotAreaInput.value || 5800);
-      const road = getSelectedRoad();
-      const rule = roadRules[road] || roadRules[45];
-      const baseFsi = Number(rule.fsi);
-      const allowedFsi = baseFsi * 1.0;
-      const buildable = area * allowedFsi;
-      const residential = buildable * 0.75;
-      const carDemand = Math.max(80, Math.round(residential / 230));
-      const developerProfit = 15_988 + ((area - 5800) * 1.4) + ((road - 45) * 35) - (Math.abs((baseFsi - 4) * 600));
-      const irr = snapshot[activeDeal].irr + ((area - 5800) / 10000) * 0.1 + ((road - 45) / 10) * 0.05;
-      const npv = snapshot[activeDeal].npv + ((area - 5800) / 100) * 0.8;
-      const gov = snapshot[activeDeal].gov + ((area - 5800) / 100) * 0.9;
-      const city = snapshot[activeDeal].city + ((area - 5800) / 100) * 0.6;
-      const econ = snapshot[activeDeal].econ + ((area - 5800) / 100) * 0.4;
-
-      return {
-        area,
-        road,
-        rule,
-        buildable,
-        residential,
-        carDemand,
-        developerProfit,
-        irr: Math.max(18, Math.min(32, irr)),
-        npv: Math.max(1500, npv),
-        gov: Math.max(4000, gov),
-        city: Math.max(200, city),
-        econ: Math.max(80, econ)
-      };
+    function syncControlsToDom() {
+      els.plotArea.value = state.controls.area;
+      els.areaSlider.value = state.controls.area;
+      document.getElementById('s_fsi').value = state.controls.fsi;
+      document.getElementById('s_h').value = state.controls.h;
+      document.getElementById('s_front').value = state.controls.front;
+      document.getElementById('s_side').value = state.controls.side;
+      document.getElementById('s_fp').value = state.controls.fp;
+      document.getElementById('s_muz').value = state.controls.muz;
+      document.getElementById('s_act').value = state.controls.act;
+      document.getElementById('s_trans').value = state.controls.trans;
+      document.getElementById('s_green').value = state.controls.green;
+      document.getElementById('s_left').value = state.controls.left;
+      document.getElementById('s_btl').checked = state.controls.btl;
+      els.customRow.value = state.activeRoad;
+      updateControlLabels();
     }
 
     function renderRoadOptions() {
       const rows = [45, 24, 18, 12];
-      roadButtons.innerHTML = rows.map(r => `
-        <div class="road-option ${r === activeRoad ? 'active' : ''}" data-road="${r}">
+      els.roadGrid.innerHTML = rows.map(r => `
+        <div class="road-option ${state.activeRoad === r ? 'active' : ''}" data-row="${r}">
           <strong>${r} m</strong>
-          <small>${roadRules[r].name}</small>
+          <small>${rowRules[r].name}</small>
         </div>
       `).join('');
 
-      roadButtons.querySelectorAll('.road-option').forEach(el => {
+      els.roadGrid.querySelectorAll('.road-option').forEach(el => {
         el.addEventListener('click', () => {
-          activeRoad = Number(el.dataset.road);
-          customRoadInput.value = activeRoad;
+          state.activeRoad = Number(el.dataset.row);
+          els.customRow.value = state.activeRoad;
           update();
         });
       });
@@ -964,130 +703,318 @@
         ['developerFloor', 'Developer floor']
       ];
 
-      dealButtonsWrap.innerHTML = buttons.map(([key, label]) => `
-        <button class="deal-button ${activeDeal === key ? 'active' : ''}" data-deal="${key}">${label}</button>
+      els.dealButtons.innerHTML = buttons.map(([key, label]) => `
+        <button class="deal-button ${state.activeDeal === key ? 'active' : ''}" data-deal="${key}">${label}</button>
       `).join('');
 
-      dealButtonsWrap.querySelectorAll('.deal-button').forEach(btn => {
+      els.dealButtons.querySelectorAll('.deal-button').forEach(btn => {
         btn.addEventListener('click', () => {
-          activeDeal = btn.dataset.deal;
+          state.activeDeal = btn.dataset.deal;
           update();
         });
       });
     }
 
-    function renderMatrix() {
-      const rows = [
-        { label: 'Levy ↓ / Charges deferred →', values: [0, 25, 50, 75, 100] },
-        { label: '0%', values: [22.4, 23.9, 25.9, 28.4, 31.7] },
-        { label: '1.0%', values: [21.8, 23.3, 25.1, 27.6, 30.7] },
-        { label: '2.0%', values: [21.2, 22.6, 24.4, 26.7, 29.8] },
-        { label: '3.0%', values: [20.5, 21.9, 23.7, 25.9, 28.8] },
-        { label: '4.0%', values: [19.9, 21.2, 22.9, 25.0, 27.8] },
-        { label: '5.0%', values: [19.3, 20.6, 22.1, 24.2, 26.9] }
-      ];
+    function getSelectedRoadValue() {
+      const v = Number(els.customRow.value || state.activeRoad);
+      if (v >= 45) return 45;
+      if (v >= 24) return 24;
+      if (v >= 18) return 18;
+      return 12;
+    }
 
-      const head = ['<th></th>', '<th>0%</th>', '<th>25%</th>', '<th>50%</th>', '<th>75%</th>', '<th>100%</th>'];
-      const body = rows.map((row, index) => {
-        const cells = row.values.map((value, j) => {
-          const cls = (value >= 20 && value <= 25) ? 'win-cell' : (value > 25 ? 'win-cell' : 'bad-cell');
-          const str = `${value}${typeof value === 'number' && value % 1 !== 0 ? '' : ''}`;
-          return `<td class="${cls}">${typeof value === 'number' ? value.toFixed(1) + '%' : value}</td>`;
-        });
+    function solvePlot(plot) {
+      const row = Math.max(plot.row, getSelectedRoadValue());
+      const c = state.controls;
+      const greenArea = (c.green / 100) * plot.area;
+      const leftArea = (c.left / 100) * plot.area;
+      const builtFootprint = plot.area * (c.fsi / rowRules[row].fsi);
+      const frontage = Math.min(c.act, rowRules[row].active);
+      const gflTrans = Math.min(c.trans, rowRules[row].transparency);
+      const greenPass = greenArea >= plot.area * 0.2;
+      const status = (frontage >= rowRules[row].active * 0.95 && gflTrans >= rowRules[row].transparency * 0.9 && greenPass) ? 'ok' : (frontage >= rowRules[row].active * 0.75 || greenPass ? 'warn' : 'bad');
+      const metrics = {
+        row,
+        fsi: c.fsi,
+        frontage,
+        gflTrans,
+        greenArea,
+        leftArea,
+        setbacks: { front: c.front, side: c.side },
+        alignment: c.btl ? 'road-aligned' : 'offset',
+        builtFootprint,
+        greenPass,
+        leftAreaPct: c.left
+      };
 
-        if (index === 0) {
-          return `<tr><th>Levy ↓ / Charges deferred →</th>${row.values.map(v => `<th>${v}%</th>`).join('')}</tr>`;
-        }
+      const fin = financeModel.calculate(plot, metrics);
+      return { ...metrics, status, fin };
+    }
 
-        return `<tr><td>${row.label}</td>${cells.join('')}</tr>`;
+    function getSelectedPlot() {
+      return plotData.find(p => p.id === state.selectedPlotId) || null;
+    }
+
+    function renderPlotList() {
+      const rows = plotData.map(p => {
+        const res = solvePlot(p);
+        const selected = p.id === state.selectedPlotId ? 'selected' : '';
+        return `
+          <tr class="${selected}" data-id="${p.id}">
+            <td>${p.id}</td>
+            <td>${p.row} m</td>
+            <td><span class="status-pill ${res.status}">${res.status === 'ok' ? 'OK' : res.status === 'warn' ? 'WARN' : 'BAD'}</span></td>
+          </tr>
+        `;
       }).join('');
 
-      document.getElementById('matrixGrid').innerHTML = `
-        <thead>
-          <tr>${head.join('')}</tr>
-        </thead>
-        <tbody>${body}</tbody>
+      els.plotList.innerHTML = rows;
+      els.plotList.querySelectorAll('tr[data-id]').forEach(tr => {
+        tr.addEventListener('click', () => {
+          state.selectedPlotId = tr.dataset.id;
+          update();
+        });
+      });
+    }
+
+    function renderSelectedPlotPanel() {
+      const plot = getSelectedPlot();
+      if (!plot) {
+        els.selectedPlotPanel.innerHTML = '<div class="head">No plot selected</div><div class="sub">Choose a plot from the site plan or list.</div>';
+        return;
+      }
+      const result = solvePlot(plot);
+      els.selectedPlotPanel.innerHTML = `
+        <div class="head">${plot.id} · ${plot.row} m ROW</div>
+        <div class="sub">${plot.action}</div>
+        <div class="sub" style="margin-top:8px;">FSI ${result.fsi.toFixed(2)} • Active frontage ${result.frontage.toFixed(0)}% • Green ${result.greenArea.toFixed(0)} sqm</div>
+        <div class="sub" style="margin-top:8px;">NPV: ₹ ${result.fin.npv.toFixed(0)} Cr • IRR: ${result.fin.irr.toFixed(1)}%</div>
       `;
     }
 
-    function renderStressGrid() {
-      const headers = ['<th></th>', '<th>-10%</th>', '<th>-5%</th>', '<th>0%</th>', '<th>+5%</th>', '<th>+10%</th>', '<th>+15%</th>'];
-      const body = stressGrid.map((row, idx) => {
-        const label = row[0];
-        const cells = row.slice(1).map((value) => {
-          const cls = value >= 20 ? 'win-cell' : value >= 18 ? 'warn-cell' : 'bad-cell';
-          return `<td class="${cls}">${value.toFixed(1)}%</td>`;
-        });
-        return `<tr><td>${label}</td>${cells.join('')}</tr>`;
+    function renderPlotKpis() {
+      const rows = plotData.map(p => {
+        const res = solvePlot(p);
+        return `
+          <tr>
+            <td>${p.id}</td>
+            <td>${p.row} m</td>
+            <td>${res.fsi.toFixed(2)}</td>
+            <td>${res.frontage.toFixed(0)}%</td>
+            <td>${res.greenArea.toFixed(0)}</td>
+            <td>${res.leftArea.toFixed(0)}</td>
+            <td>₹ ${res.fin.npv.toFixed(0)} Cr</td>
+          </tr>
+        `;
       }).join('');
 
-      document.getElementById('stressGrid').innerHTML = `
-        <thead><tr>${headers.join('')}</tr></thead>
-        <tbody>${body}</tbody>
+      els.plotKpiTable.innerHTML = `
+        <thead>
+          <tr>
+            <th>Plot</th>
+            <th>ROW</th>
+            <th>FSI</th>
+            <th>Active</th>
+            <th>Green sqm</th>
+            <th>Leftover sqm</th>
+            <th>NPV</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
       `;
+    }
+
+    function renderSiteSvg() {
+      const svg = els.siteSvg;
+      svg.innerHTML = '';
+
+      const base = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      base.setAttribute('x', 30); base.setAttribute('y', 30); base.setAttribute('width', 760); base.setAttribute('height', 360);
+      base.setAttribute('rx', 16);
+      base.setAttribute('fill', '#0b1419');
+      base.setAttribute('stroke', 'rgba(255,255,255,0.08)');
+      svg.appendChild(base);
+
+      plotData.forEach(plot => {
+        const isSelected = plot.id === state.selectedPlotId;
+        const poly = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        poly.setAttribute('x', plot.x);
+        poly.setAttribute('y', plot.y);
+        poly.setAttribute('width', plot.w);
+        poly.setAttribute('height', plot.h);
+        poly.setAttribute('rx', 10);
+        poly.setAttribute('fill', isSelected ? '#1d4150' : '#1f2d38');
+        poly.setAttribute('stroke', isSelected ? '#7be6d8' : 'rgba(255,255,255,0.2)');
+        poly.setAttribute('stroke-width', isSelected ? 2.5 : 1.2);
+        poly.setAttribute('cursor', 'pointer');
+        poly.addEventListener('click', () => {
+          state.selectedPlotId = plot.id;
+          update();
+        });
+        svg.appendChild(poly);
+
+        const result = solvePlot(plot);
+        const greenW = Math.max(20, plot.w * (state.controls.green / 100));
+        const leftW = Math.max(20, plot.w * (state.controls.left / 100));
+        const greenRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        greenRect.setAttribute('x', plot.x + 6);
+        greenRect.setAttribute('y', plot.y + plot.h - greenW * 0.7);
+        greenRect.setAttribute('width', plot.w - 12);
+        greenRect.setAttribute('height', greenW * 0.7);
+        greenRect.setAttribute('fill', '#3fae5a');
+        greenRect.setAttribute('opacity', '0.9');
+        svg.appendChild(greenRect);
+
+        const leftRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        leftRect.setAttribute('x', plot.x + plot.w - leftW);
+        leftRect.setAttribute('y', plot.y + 8);
+        leftRect.setAttribute('width', leftW - 8);
+        leftRect.setAttribute('height', plot.h - 16);
+        leftRect.setAttribute('fill', '#d9a53a');
+        leftRect.setAttribute('opacity', '0.9');
+        svg.appendChild(leftRect);
+
+        const tower = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        const towerW = Math.min(plot.w * 0.42, 74) + (plot.id === state.selectedPlotId ? 6 : 0);
+        const towerH = (result.fsi / 3.5) * 90;
+        tower.setAttribute('x', plot.x + 22);
+        tower.setAttribute('y', plot.y + 20);
+        tower.setAttribute('width', towerW);
+        tower.setAttribute('height', towerH);
+        tower.setAttribute('rx', 8);
+        tower.setAttribute('fill', isSelected ? '#dfeeff' : '#c6d8ef');
+        tower.setAttribute('opacity', '0.9');
+        tower.setAttribute('stroke', 'rgba(255,255,255,0.2)');
+        svg.appendChild(tower);
+
+        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        label.setAttribute('x', plot.x + 12);
+        label.setAttribute('y', plot.y + 16);
+        label.setAttribute('fill', '#eaf6ff');
+        label.setAttribute('font-size', '12');
+        label.setAttribute('font-weight', '700');
+        label.textContent = plot.id;
+        svg.appendChild(label);
+      });
+    }
+
+    function updateNumbers() {
+      const deal = allDeals[state.activeDeal];
+      const selectedPlot = getSelectedPlot();
+      const selected = selectedPlot ? solvePlot(selectedPlot) : null;
+
+      const irr = selected ? selected.fin.irr : deal.irr;
+      const npv = selected ? selected.fin.npv : deal.npv;
+      const gov = selected ? selected.fin.gov : deal.gov;
+      const city = selected ? selected.fin.gov * 0.18 : deal.city;
+      const econ = selected ? selected.fin.gov * 0.26 : deal.econ;
+
+      els.irrValue.innerHTML = `${irr.toFixed(1)}<small>%</small>`;
+      els.npvValue.innerHTML = `₹ ${npv.toFixed(0)}<small>Cr</small>`;
+      els.govValue.innerHTML = `₹ ${gov.toFixed(0)}<small>Cr</small>`;
+      els.cityNpvValue.innerHTML = `₹ ${city.toFixed(0)}<small>Cr</small>`;
+      els.econValue.innerHTML = `₹ ${econ.toFixed(0)}<small>Cr</small>`;
+      els.deferValue.textContent = `${deal.defer}%`;
+      els.levyValue.textContent = `${deal.levy}%`;
+
+      const rowValue = getSelectedRoadValue();
+      els.headerRow.textContent = `${rowValue} m`;
+      els.headerSelected.textContent = selectedPlot ? selectedPlot.id : 'None';
+      els.sceneArea.textContent = `${Number(state.controls.area).toLocaleString('en-IN')} sqm`;
+      els.sceneRow.textContent = `${rowValue} m`;
+
+      const recommendation = selected ? `Target ${selected.frontage.toFixed(0)}% active frontage and ${selected.greenArea.toFixed(0)} sqm public green. Align to ${rowValue} m governing ROW.` : 'Use the in-band deal: 35% defer + 0.75% levy keeps both sides whole.';
+      els.recommendationText.textContent = recommendation;
+    }
+
+    function addPlotSelectionState() {
+      if (!state.selectedPlotId) state.selectedPlotId = plotData[0].id;
     }
 
     function update() {
-      const result = simulate();
-      const deal = snapshot[activeDeal];
-      const activeRoadRule = roadRules[result.road] || roadRules[45];
-
-      sceneAreaLabel.textContent = `${result.area.toLocaleString('en-IN')} sqm`;
-      sceneRoadLabel.textContent = `${result.road} m`;
-
-      irrValue.innerHTML = `${result.irr.toFixed(1)}<small>%</small>`;
-      npvValue.innerHTML = `₹ ${result.npv.toFixed(0).toLocaleString('en-IN')}<small>Cr</small>`;
-      govValue.innerHTML = `₹ ${result.gov.toFixed(0).toLocaleString('en-IN')}<small>Cr</small>`;
-      cityNpvValue.innerHTML = `₹ ${result.city.toFixed(0).toLocaleString('en-IN')}<small>Cr</small>`;
-      econValue.innerHTML = `₹ ${result.econ.toFixed(0).toLocaleString('en-IN')}<small>Cr</small>`;
-      deferValue.textContent = `${snapshot[activeDeal].defer}%`;
-      levyValue.textContent = `${snapshot[activeDeal].levy}%`;
-
-      if (activeDeal === 'inBand') {
-        recommendationText.textContent = 'Use the in-band deal: 35% defer + 0.75% levy keeps both sides whole while staying inside the target IRR band.';
-      } else if (activeDeal === 'publicMax') {
-        recommendationText.textContent = 'Maximise public gain with 100% deferred charges and 2.25% levy while still keeping developers no worse off than today.';
-      } else if (activeDeal === 'developerFloor') {
-        recommendationText.textContent = 'This is the developer floor. It brings IRR down to 20.1%, so it is a stress-case rather than the preferred deal.';
-      } else {
-        recommendationText.textContent = 'Base case is already win-win, with developer IRR at 22.4% and public value at ₹ 4,338 Cr.';
-      }
-
-      activeRoadRule;
-      plotAreaInput.value = result.area;
-      areaRange.value = result.area;
-      customRoadInput.value = result.road;
+      addPlotSelectionState();
+      syncControlsToDom();
       renderRoadOptions();
       renderDealButtons();
+      renderPlotList();
+      renderSiteSvg();
+      renderSelectedPlotPanel();
+      renderPlotKpis();
+      updateNumbers();
     }
 
-    plotAreaInput.addEventListener('input', () => {
-      const v = Math.max(1000, Number(plotAreaInput.value || 5800));
-      plotAreaInput.value = v;
-      areaRange.value = v;
+    document.getElementById('designWholeSite').addEventListener('click', () => {
+      state.selectedPlotId = plotData[0].id;
       update();
     });
 
-    areaRange.addEventListener('input', () => {
-      plotAreaInput.value = areaRange.value;
+    document.getElementById('blankSite').addEventListener('click', () => {
+      state.selectedPlotId = null;
       update();
     });
 
-    customRoadInput.addEventListener('input', () => {
-      activeRoad = Number(customRoadInput.value || 45);
+    document.getElementById('deselectPlot').addEventListener('click', () => {
+      state.selectedPlotId = null;
       update();
     });
 
-    objectiveButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        objectiveButtons.forEach(b => b.classList.toggle('active', b === btn));
+    document.getElementById('resetPlot').addEventListener('click', () => {
+      const plot = getSelectedPlot();
+      if (!plot) return;
+      state.mainState = null;
+      state.controls = {
+        area: plot.area,
+        fsi: 3.5,
+        h: 70,
+        front: 4,
+        side: 4,
+        fp: 3.5,
+        muz: 0,
+        act: 60,
+        trans: 50,
+        green: 30,
+        left: 20,
+        btl: true
+      };
+      update();
+    });
+
+    els.plotArea.addEventListener('input', () => {
+      state.controls.area = Number(els.plotArea.value || 5800);
+      update();
+    });
+    els.areaSlider.addEventListener('input', () => {
+      state.controls.area = Number(els.areaSlider.value || 5800);
+      update();
+    });
+    els.customRow.addEventListener('input', () => {
+      const row = Number(els.customRow.value || 45);
+      state.activeRoad = row;
+      update();
+    });
+
+    ['s_fsi', 's_h', 's_front', 's_side', 's_fp', 's_muz', 's_act', 's_trans', 's_green', 's_left'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => {
+        const el = document.getElementById(id);
+        const key = id.replace('s_', '');
+        state.controls[key] = Number(el.value);
+        updateControlLabels();
+        update();
       });
     });
 
-    renderRoadOptions();
-    renderDealButtons();
-    renderMatrix();
-    renderStressGrid();
+    document.getElementById('s_btl').addEventListener('change', (e) => {
+      state.controls.btl = e.target.checked;
+      update();
+    });
+
+    document.querySelectorAll('[data-objective]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.objective = btn.dataset.objective;
+        document.querySelectorAll('[data-objective]').forEach(b => b.classList.toggle('active', b === btn));
+      });
+    });
+
     update();
   </script>
 </body>
