@@ -3,598 +3,1092 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wadala East · Plot + Financial Dashboard</title>
+  <title>Wadala East · Financial & Plot Simulation</title>
   <style>
-    :root{
-      --bg1:#f1a779;
-      --bg2:#7cb9e8;
-      --shell:#111821;
-      --shell-2:#161d27;
-      --panel:#171f2b;
-      --panel-2:#1d2632;
-      --panel-3:#202c38;
-      --line:#2c3948;
-      --text:#edf1f7;
-      --muted:#98a7b6;
-      --green:#38d39f;
-      --green-2:#3be3a3;
-      --teal:#3cc8c6;
-      --amber:#ffb059;
-      --orange:#ee7b45;
-      --red:#ff6d6d;
-      --blue:#6ea8ff;
-      --shadow: rgba(0,0,0,.35);
-      --glass: rgba(255,255,255,.03);
+    :root {
+      --bg: #081218;
+      --bg-2: #0e1a23;
+      --panel: #121d27;
+      --panel-2: #162330;
+      --panel-3: #1b2d39;
+      --line: rgba(255,255,255,0.08);
+      --line-strong: rgba(255,255,255,0.14);
+      --text: #edf3f8;
+      --muted: #9ca9b5;
+      --muted-2: #8191a0;
+      --teal: #59d7c1;
+      --teal-2: #41b9a8;
+      --blue: #73b9ff;
+      --indigo: #8ea8ff;
+      --amber: #ffbf69;
+      --amber-2: #d88d3f;
+      --orange: #ff8b5d;
+      --red: #ff7272;
+      --green: #6fe39d;
+      --green-2: #4fce7d;
+      --shadow: rgba(0,0,0,0.38);
+      --table-head: rgba(255,255,255,0.04);
     }
 
-    *{box-sizing:border-box}
-    html,body{
-      margin:0;
-      height:100%;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      background: linear-gradient(135deg, var(--bg1) 0%, var(--bg1) 20%, #e89d7f 40%, #8db6de 60%, var(--bg2) 100%);
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(128,190,255,0.18), transparent 20%),
+        linear-gradient(135deg, #e6a469 0%, #b9c7d6 22%, #7aa9d9 52%, #5f8bc0 100%);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
       color: var(--text);
     }
 
-    body{ display:grid; place-items:center; padding:28px; }
-
-    .app{
-      width:min(1340px, 100%);
-      min-height:880px;
-      background: rgba(8,12,17,.95);
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:28px;
-      box-shadow: 0 30px 80px rgba(0,0,0,.32);
-      overflow:hidden;
-      position:relative;
+    .shell {
+      max-width: 1480px;
+      margin: 32px auto;
+      background: rgba(7, 13, 18, 0.82);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 26px;
+      box-shadow: 0 36px 80px rgba(8, 16, 24, 0.35);
+      overflow: hidden;
+      backdrop-filter: blur(6px);
     }
 
-    .app::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background: linear-gradient(180deg, rgba(255,255,255,.02), transparent 20%, transparent);
-      pointer-events:none;
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 18px 22px 16px;
+      background: rgba(14, 20, 26, 0.85);
+      border-bottom: 1px solid var(--line);
     }
 
-    .dashboard{ display:grid; grid-template-columns: 220px 1fr; min-height:100%; }
-
-    .sidebar{
-      background: rgba(12,17,23,.82);
-      border-right:1px solid rgba(255,255,255,.08);
-      padding:18px 14px 14px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
     }
 
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:8px 10px 14px;
-      color:var(--text);
-      font-weight:700;
-      letter-spacing:.2px;
+    .brand-mark {
+      width: 24px; height: 24px; border-radius: 8px;
+      background: linear-gradient(135deg, #6fe39d, #2a8a7d);
+      position: relative;
     }
-
-    .brand-mark{
-      width:24px; height:24px; border-radius:7px;
-      background: linear-gradient(135deg, #77dcc0, #1a7c68);
-      position:relative;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.15);
-    }
-
-    .brand-mark::before, .brand-mark::after{
-      content:"";
-      position:absolute;
-      inset:5px;
-      border-radius:4px;
-      border:2px solid rgba(255,255,255,.8);
+    .brand-mark::before {
+      content: "";
+      position: absolute;
+      inset: 5px;
+      border-radius: 4px;
+      border: 2px solid rgba(255,255,255,0.8);
       border-top-color: transparent;
       border-left-color: transparent;
-      transform:rotate(45deg);
+      transform: rotate(45deg);
     }
 
-    .brand-mark::after{
-      inset:9px;
-      border-width:1.5px;
-      border-color:rgba(255,255,255,.9);
-      border-top-color: transparent;
-      border-left-color: transparent;
+    .title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
 
-    .nav{ display:flex; flex-direction:column; gap:6px; margin-top:8px; }
-
-    .nav-item{
-      display:flex; align-items:center; gap:10px; color:var(--muted);
-      padding:11px 12px; border-radius:10px; font-weight:550; letter-spacing:.1px;
-      user-select:none; cursor:pointer; transition:.2s ease;
+    .eyebrow {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
     }
 
-    .nav-item:hover{ background: rgba(255,255,255,.02); color:var(--text); }
-    .nav-item.active{
-      background: linear-gradient(90deg, rgba(49,138,108,.28), rgba(49,138,108,.12));
-      color:var(--text); border:1px solid rgba(93,203,162,.25);
+    .title {
+      font-size: clamp(1.5rem, 2vw, 2.3rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin: 0;
     }
 
-    .nav-icon{ width:14px; height:14px; display:inline-grid; place-items:center; opacity:.9; font-size:13px; }
-    .sidebar-spacer{ flex:1 }
-
-    .nav-bottom{
-      padding-top:12px;
-      border-top:1px solid rgba(255,255,255,.08);
-      display:flex; flex-direction:column; gap:6px;
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 14px;
     }
 
-    .content{
-      background: rgba(10,13,18,.88);
-      min-width:0;
-      display:flex;
-      flex-direction:column;
+    .top-actions .date { white-space: nowrap; }
+    .notif, .avatar {
+      width: 34px; height: 34px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      display: grid;
+      place-items: center;
+      font-size: 16px;
+    }
+    .avat {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: linear-gradient(135deg, #d4d9de, #66727d);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+    .avat::before {
+      content: "";
+      position: absolute;
+      inset: 8px 9px 12px;
+      border-radius: 50%;
+      background: #7e5d48;
+      box-shadow: 0 11px 0 8px #cab394;
     }
 
-    .topbar{
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      padding:18px 26px 16px 26px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      background: rgba(13,18,24,.82);
+    .layout {
+      display: grid;
+      grid-template-columns: 310px minmax(0, 1fr) 360px;
+      gap: 18px;
+      padding: 18px;
     }
 
-    .search{ position:relative; flex:1; max-width:560px; min-width:220px; }
-    .search input{
-      width:100%; height:40px; border-radius:18px; border:1px solid rgba(255,255,255,.08);
-      background: rgba(10,16,22,.95); color:var(--text); padding:0 18px 0 42px; outline:none; font-size:14px;
-    }
-    .search::before{
-      content:"⌕";
-      position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:18px;
+    .panel {
+      background: rgba(18, 29, 39, 0.85);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      min-width: 0;
     }
 
-    .top-actions{ display:flex; align-items:center; gap:10px; color:var(--muted); font-size:15px; }
-    .date{ color:var(--muted); font-size:14px; white-space:nowrap; }
+    .control-group + .control-group { margin-top: 18px; }
 
-    .icon-btn{
-      width:34px;height:34px;border-radius:12px; display:grid; place-items:center;
-      background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); position:relative;
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 10px;
     }
 
-    .icon-btn .dot{
-      position:absolute; width:8px;height:8px;border-radius:50%; background:var(--red); top:4px; right:4px;
-      border:2px solid rgba(17,24,33,.7);
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .field label {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 600;
     }
 
-    .avatar{
-      width:34px; height:34px; border-radius:50%;
-      background: linear-gradient(135deg, #d4d9df, #5d6672);
-      box-shadow: inset 0 0 0 2px rgba(255,255,255,.18);
-      position:relative; overflow:hidden;
+    .input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.02);
+      padding: 0 10px 0 14px;
+      height: 44px;
+    }
+    .input-wrap input {
+      flex: 1;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 18px;
+      font-weight: 700;
+      outline: none;
+      letter-spacing: -0.02em;
+    }
+    .input-wrap span { color: var(--muted-2); font-size: 12px; }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--teal);
     }
 
-    .avatar::before{
-      content:"";
-      position:absolute; inset:8px 9px 11px; border-radius:50%; background:#7d5d47; box-shadow: 0 12px 0 8px #c0a98d;
+    .road-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
     }
 
-    .main{ padding:18px 26px 26px; overflow:auto; min-height:0; display:flex; flex-direction:column; gap:18px; }
+    .road-option {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.02);
+      padding: 10px 10px 8px;
+      cursor: pointer;
+      transition: 0.12s ease;
+    }
+    .road-option.active {
+      background: rgba(89, 215, 193, 0.12);
+      border-color: rgba(89, 215, 193, 0.4);
+      box-shadow: inset 0 -2px 0 rgba(89, 215, 193, 0.4);
+    }
+    .road-option strong { display: block; font-size: 18px; font-weight: 800; letter-spacing: -0.04em; }
+    .road-option small { color: var(--muted); font-size: 11px; }
 
-    .tabs{ display:flex; gap:10px; flex-wrap:wrap; }
-    .tab{
-      padding:10px 15px; border-radius:12px; border:1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.02); color:var(--muted); cursor:pointer; font-weight:600; font-size:14px;
+    .segmented {
+      display: flex;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.02);
+    }
+    .segmented button {
+      flex: 1;
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      padding: 9px 6px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .segmented button.active {
+      background: rgba(89, 215, 193, 0.14);
+      color: var(--text);
+      box-shadow: inset 0 -2px 0 rgba(89, 215, 193, 0.55);
     }
 
-    .tab.active{
-      background: linear-gradient(135deg, rgba(30,128,105,.72), rgba(16,122,95,.42));
-      border-color:rgba(80,238,194,.25); color:var(--text);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
     }
 
-    .stats{ display:grid; grid-template-columns: repeat(4, minmax(200px,1fr)); gap:14px; }
-
-    .stat-card{
-      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:16px;
-      padding:16px 18px 12px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
-      min-height:118px;
-      position:relative;
-      overflow:hidden;
+    .mini-table th, .mini-table td {
+      border-bottom: 1px solid var(--line);
+      padding: 8px 0;
+      text-align: left;
+      font-size: 12px;
+    }
+    .mini-table th {
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .mini-table td.value {
+      text-align: right;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
     }
 
-    .stat-card::before{
-      content:"";
-      position:absolute; inset:0;
-      background: linear-gradient(135deg, rgba(255,255,255,.03), transparent 50%);
-      pointer-events:none;
+    .main-panel {
+      display: grid;
+      grid-template-rows: auto auto auto;
+      gap: 18px;
+      min-width: 0;
     }
 
-    .stat-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; color:var(--muted); font-size:13px; font-weight:600; margin-bottom:8px; }
-    .stat-value{ font-size: clamp(1.5rem, 2vw, 2.2rem); font-weight:700; letter-spacing:-.04em; margin:0; line-height:1.1; font-variant-numeric:tabular-nums; color:var(--text); }
-    .stat-change{ display:flex; align-items:center; gap:7px; margin-top:10px; font-size:12px; color:var(--muted); }
-    .trend-up{ color: var(--green); }
-    .trend-down{ color: var(--orange); }
-
-    .mini-chip{ display:inline-flex; align-items:center; gap:6px; font-weight:700; padding:3px 8px; border-radius:999px; font-size:11px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06); }
-
-    .content-grid{ display:grid; grid-template-columns: 1.1fr 1.5fr; gap:18px; min-height:0; }
-    .panel{
-      background: rgba(22,28,36,.85); border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:14px 16px 10px;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.03); min-width:0;
+    .hero {
+      background: rgba(18, 29, 39, 0.9);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px 18px 16px;
     }
 
-    .panel-title{ display:flex; align-items:center; justify-content:space-between; font-weight:700; font-size:15px; margin-bottom:12px; }
-    .panel-title small{ color:var(--muted); font-size:12px; }
-
-    .legend-inline{ display:flex; align-items:center; gap:10px; color:var(--muted); font-size:12px; margin-bottom:10px; flex-wrap:wrap; }
-    .legend-inline .swatch{ width:10px;height:10px;border-radius:50%; display:inline-block; vertical-align:-1px; margin-right:6px; }
-
-    .heatmap{
-      display:grid; grid-template-columns: 38px repeat(7, 1fr); gap:8px 6px; align-items:center; font-size:11.5px; color:var(--muted); padding-top:6px;
-    }
-    .heatmap .time{ color:var(--muted); text-align:right; padding-right:4px; font-weight:600; line-height:20px; }
-    .heatmap .day{ text-align:center; font-weight:600; padding-bottom:4px; color:var(--muted); }
-    .cell{ width:100%; height:20px; border-radius:5px; background: rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.04); position:relative; box-shadow: inset 0 1px 0 rgba(255,255,255,.05); }
-    .cell.level-0{ background: rgba(255,255,255,.02); }
-    .cell.level-1{ background: rgba(75, 214, 164, .24); }
-    .cell.level-2{ background: rgba(75, 214, 164, .42); }
-    .cell.level-3{ background: rgba(75, 214, 164, .68); }
-    .cell.level-4{ background: rgba(75, 214, 164, .8); }
-
-    .chart-panel{ padding-bottom:4px; }
-    .linechart{ position:relative; height:220px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,.01), rgba(255,255,255,.005)); border:1px solid rgba(255,255,255,.06); overflow:hidden; margin-top:8px; }
-    .linechart svg{ width:100%; height:100%; display:block; background: transparent; }
-
-    .chart-keys{ display:flex; justify-content:space-between; gap:8px; font-size:12px; color:var(--muted); margin-top:8px; }
-    .chart-keys .key{ display:flex; align-items:center; gap:6px; }
-    .chart-keys .key::before{ content:""; width:12px;height:3px;border-radius:2px; display:inline-block; background: currentColor; }
-
-    .bottom-grid{ display:grid; grid-template-columns: 1fr 1.25fr; gap:18px; }
-
-    .country-grid{ display:grid; grid-template-columns: repeat(2, minmax(130px,1fr)); gap:12px; margin-top:10px; }
-    .country-card{
-      background: linear-gradient(180deg, rgba(255,255,255,.015), rgba(255,255,255,.01));
-      border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:10px 10px 8px;
-      display:flex; gap:10px; align-items:center; justify-content:space-between; min-height:80px;
-    }
-    .flag{ font-size:22px; width:28px; text-align:center; }
-    .country-body{ flex:1; min-width:0; }
-    .country-body .c-name{ font-weight:700; font-size:14px; color:var(--text); }
-    .country-body .c-sub{ font-size:11px; color:var(--muted); }
-
-    table{ width:100%; border-collapse:collapse; font-size:12px; color:var(--text); }
-    th{ text-align:left; font-size:11px; color:var(--muted); font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:9px 10px; border-bottom:1px solid rgba(255,255,255,.07); }
-    td{ padding:10px; border-bottom:1px solid rgba(255,255,255,.05); font-variant-numeric:tabular-nums; }
-    thead th:nth-child(n+2), tbody td:nth-child(n+2){ text-align:right; }
-    .up{ color: var(--green); font-weight:700; }
-
-    .plot-land{ display:grid; grid-template-columns: 1.3fr .7fr; gap:18px; min-height:0; }
-
-    .scene{
-      background: linear-gradient(180deg, rgba(39,49,60,.8), rgba(19,25,33,.9));
-      border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:14px; min-height:360px; position:relative; overflow:hidden;
+    .hero-header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
     }
 
-    .scene-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; color:var(--muted); font-size:12px; }
-    .scene-board{
-      position:relative; height:300px; border-radius:14px; background: radial-gradient(circle at 30% 20%, rgba(101,249,198,.08), transparent 35%), linear-gradient(180deg, rgba(17,22,28,.9), rgba(12,17,22,.96));
-      border:1px solid rgba(255,255,255,.07); overflow:hidden; perspective:1200px; transform-style:preserve-3d;
+    .hero-header h2 {
+      font-size: clamp(2rem, 2.6vw, 3rem);
+      margin: 0;
+      letter-spacing: -0.06em;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .hero-header h2 .accent { color: var(--teal); }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.8fr);
+      gap: 16px;
     }
 
-    .land{
-      position:absolute; left:28px; right:28px; top:110px; height:150px; border-radius:12px; background: linear-gradient(135deg, rgba(47,116,108,.8), rgba(22,40,39,.9));
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04), 0 30px 40px rgba(0,0,0,.15); transform: rotateX(66deg) rotateZ(-22deg) translateZ(-20px); border:1px solid rgba(103,255,204,.15);
+    .scene {
+      position: relative;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(12,16,20,0.9), rgba(12,18,23,0.95));
+      border: 1px solid var(--line);
+      height: 420px;
+      overflow: hidden;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
     }
 
-    .building{
-      position:absolute; left:50%; top:58%; width:160px; height:160px; transform: translate(-50%,-50%) rotateX(60deg) rotateZ(-25deg); transform-style:preserve-3d; filter: drop-shadow(0 18px 26px rgba(0,0,0,.35));
+    .scene::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 40% 28%, rgba(97,214,180,0.12), transparent 22%),
+        linear-gradient(180deg, rgba(255,255,255,0.01), transparent 30%);
+      pointer-events: none;
     }
 
-    .tower{
-      position:absolute; width:72px; height:110px; left:44px; top:18px; transform-style:preserve-3d; background: linear-gradient(180deg, rgba(102,163,255,.9), rgba(41,90,146,.8)); border:1px solid rgba(255,255,255,.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+    .base-layer {
+      position: absolute;
+      inset: 18px 20px 22px 20px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(27,62,57,0.8), rgba(15,28,27,0.9));
+      transform: perspective(1200px) rotateX(68deg) rotateZ(-22deg);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), 0 30px 32px rgba(0,0,0,0.18);
+      border: 1px solid rgba(99, 224, 193, 0.14);
     }
 
-    .tower::before{ content:""; position:absolute; inset:0; background: linear-gradient(90deg, rgba(255,255,255,.18), rgba(255,255,255,0) 18%, rgba(255,255,255,.12) 52%, transparent); transform: translateZ(6px); }
-    .tower::after{ content:""; position:absolute; left:8px; top:8px; right:8px; bottom:8px; background: repeating-linear-gradient(0deg, rgba(255,255,255,.08) 0 6px, rgba(255,255,255,0) 6px 11px); opacity:.4; }
-
-    .tower.t2{ left:2px; top:40px; width:54px;height:88px; background: linear-gradient(180deg, rgba(101,240,190,.9), rgba(45,132,95,.8)); }
-    .tower.t3{ left:88px; top:34px; width:58px;height:96px; background: linear-gradient(180deg, rgba(255,171,86,.93), rgba(160,100,34,.8)); }
-
-    .podium{
-      position:absolute; left:18px; right:18px; bottom:18px; height:70px; border-radius:10px; background: linear-gradient(180deg, rgba(116,151,171,.8), rgba(42,74,86,.9)); border:1px solid rgba(255,255,255,.12); transform: translateZ(0) rotateX(60deg) rotateZ(-25deg); box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+    .podium {
+      position: absolute;
+      left: 24%; right: 22%; bottom: 18%; height: 24%;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: linear-gradient(180deg, rgba(116,151,171,.8), rgba(45,69,82,.95));
+      transform: perspective(1200px) rotateX(66deg) rotateZ(-22deg);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
     }
 
-    .plot-card{ background: rgba(14,21,30,.8); border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:14px; min-height:360px; display:flex; flex-direction:column; }
-    .kpi-grid{ display:grid; grid-template-columns: repeat(2, minmax(120px,1fr)); gap:12px; margin-top:12px; }
-    .mini-card{ background: rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:10px; }
-    .mini-card .l{ font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px; }
-    .mini-card .v{ font-size:20px; font-weight:700; line-height:1.1; font-variant-numeric:tabular-nums; }
-    .mini-card .v small{ font-size:11px; color:var(--muted); font-weight:600; margin-left:4px; }
+    .tower {
+      position: absolute;
+      width: 86px;
+      height: 150px;
+      border-radius: 8px 8px 0 0;
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08), 0 15px 25px rgba(0,0,0,0.18);
+      background: linear-gradient(180deg, rgba(99,158,255,0.9), rgba(46,81,138,0.86));
+    }
+    .tower::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        180deg,
+        rgba(255,255,255,0.12),
+        rgba(255,255,255,0.12) 12px,
+        rgba(255,255,255,0) 12px,
+        rgba(255,255,255,0) 20px
+      );
+      opacity: 0.5;
+    }
+    .tower.t1 { left: 35%; bottom: 23%; }
+    .tower.t2 { left: 48%; bottom: 27%; width: 72px; height: 122px; background: linear-gradient(180deg, rgba(105,228,176,0.92), rgba(41,113,81,0.82)); }
+    .tower.t3 { left: 60%; bottom: 25%; width: 82px; height: 136px; background: linear-gradient(180deg, rgba(255,176,87,0.9), rgba(156,102,35,0.86)); }
 
-    .pill{ display:inline-flex; align-items:center; gap:6px; padding:5px 8px; border-radius:999px; font-size:11px; border:1px solid transparent; font-weight:700; background: rgba(255,255,255,.04); }
-    .pill.ok{ background: rgba(56,211,159,.1); color: var(--green); border-color: rgba(56,211,159,.28);} 
-
-    .hidden{ display:none !important; }
-
-    @media (max-width: 1080px){
-      .dashboard{ grid-template-columns:1fr; }
-      .sidebar{ border-right:none; border-bottom:1px solid rgba(255,255,255,.08); }
-      .content-grid, .bottom-grid, .plot-land{ grid-template-columns:1fr; }
-      .stats{ grid-template-columns:repeat(2, minmax(160px,1fr)); }
+    .scene-label {
+      position: absolute;
+      bottom: 12px;
+      left: 18px;
+      right: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      z-index: 2;
     }
 
-    @media (max-width: 700px){
-      body{ padding:12px; }
-      .topbar{ padding:14px 14px 12px; }
-      .main{ padding:14px; }
-      .stats{ grid-template-columns:1fr; }
-      .country-grid{ grid-template-columns:1fr; }
+    .summary-box {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .stat-card {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.02);
+      border-radius: 16px;
+      padding: 12px 14px;
+      min-height: 96px;
+    }
+    .stat-card .k {
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .stat-card .v {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: -0.06em;
+      line-height: 1.05;
+    }
+    .stat-card .v small {
+      font-size: 11px;
+      color: var(--muted);
+      margin-left: 4px;
+      letter-spacing: 0.02em;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(89,215,193,0.12);
+      color: var(--teal);
+      border: 1px solid rgba(89,215,193,0.25);
+      margin-top: 8px;
+    }
+
+    .inline-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .section-card {
+      background: rgba(18, 29, 39, 0.9);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .section-head h3 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -0.03em;
+    }
+
+    .low-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+    }
+
+    .matrix-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.02);
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 560px;
+      font-size: 12px;
+      background: rgba(255,255,255,0.01);
+    }
+    table.data-table thead th {
+      position: sticky;
+      top: 0;
+      background: rgba(18,29,39,0.98);
+      color: var(--muted);
+      border-bottom: 1px solid var(--line);
+      padding: 10px 8px;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 700;
+      text-align: right;
+    }
+    table.data-table thead th:first-child,
+    table.data-table tbody td:first-child { text-align: left; }
+    table.data-table tbody td {
+      border-bottom: 1px solid var(--line);
+      padding: 8px 8px;
+      text-align: right;
+      white-space: nowrap;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+    table.data-table tbody tr:hover td {
+      background: rgba(255,255,255,0.02);
+    }
+    .win-cell {
+      color: var(--green);
+      font-weight: 700;
+    }
+    .warn-cell {
+      color: var(--amber);
+      font-weight: 700;
+    }
+    .bad-cell {
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    .side-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .metric-box {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.02);
+      border-radius: 16px;
+      padding: 12px 14px;
+    }
+    .metric-box .head {
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .metric-box .big {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.06em;
+      line-height: 1;
+    }
+    .metric-box .sub {
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 12px;
+    }
+
+    .deal-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .deal-button {
+      appearance: none;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.02);
+      color: var(--text);
+      padding: 7px 10px;
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .deal-button.active {
+      background: rgba(89,215,193,0.12);
+      border-color: rgba(89,215,193,0.35);
+      color: var(--teal);
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      margin-top: 12px;
+    }
+
+    .pill-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.02);
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .pill.green { color: var(--green); background: rgba(111,227,157,0.08); border-color: rgba(111,227,157,0.24); }
+    .pill.amber { color: var(--amber); background: rgba(255,191,105,0.08); border-color: rgba(255,191,105,0.24); }
+    .pill.red { color: var(--red); background: rgba(255,114,114,0.08); border-color: rgba(255,114,114,0.22); }
+    .pill.blue { color: var(--blue); background: rgba(115,185,255,0.08); border-color: rgba(115,185,255,0.24); }
+
+    @media (max-width: 1180px) {
+      .layout { grid-template-columns: 1fr; }
+      .main-panel { order: 1; }
+      .low-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 740px) {
+      .shell { margin: 12px; border-radius: 18px; }
+      .topbar { flex-wrap: wrap; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .inline-grid { grid-template-columns: 1fr; }
+      .road-grid { grid-template-columns: 1fr; }
+      .layout { padding: 12px; }
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <div class="dashboard">
-      <aside class="sidebar">
-        <div class="brand"><span class="brand-mark"></span><span>Metric Flow</span></div>
+  <div class="shell">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-mark"></div>
+        <div class="title-wrap">
+          <div class="eyebrow">Wadala East</div>
+          <div style="font-size: 14px; font-weight: 800; letter-spacing: -0.02em;">Plot + Finance Console</div>
+        </div>
+      </div>
 
-        <nav class="nav">
-          <div class="nav-item active"><span class="nav-icon">⌂</span>Dashboard</div>
-          <div class="nav-item"><span class="nav-icon">🛒</span>Orders</div>
-          <div class="nav-item"><span class="nav-icon">◫</span>Products</div>
-          <div class="nav-item"><span class="nav-icon">👥</span>Customers</div>
-          <div class="nav-item"><span class="nav-icon">📊</span>Analysis</div>
-          <div class="nav-item"><span class="nav-icon">📣</span>Marketing</div>
-        </nav>
+      <div class="top-actions">
+        <div class="date">Wed, 29 May 2024</div>
+        <div class="notif">🔔</div>
+        <div class="avat" title="Profile"></div>
+      </div>
+    </div>
 
-        <div class="sidebar-spacer"></div>
+    <div class="layout">
+      <aside class="panel">
+        <div class="section-label">Control panel</div>
 
-        <div class="nav-bottom">
-          <div class="nav-item"><span class="nav-icon">⚙</span>Settings</div>
-          <div class="nav-item"><span class="nav-icon">?</span>Help Center</div>
+        <div class="control-group">
+          <div class="field">
+            <label>Plot area</label>
+            <div class="input-wrap">
+              <input id="plotArea" type="number" value="5800" min="1000" max="30000" step="50" />
+              <span>sqm</span>
+            </div>
+            <input id="areaRange" type="range" min="1000" max="30000" step="100" value="5800" />
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="section-label" style="margin-bottom: 8px;">Road frontage</div>
+          <div class="road-grid" id="roadOptions"></div>
+          <div class="field" style="margin-top: 10px;">
+            <label>Custom road width</label>
+            <div class="input-wrap" style="height: 38px;">
+              <input id="customRoad" type="number" value="45" min="6" step="1" placeholder="e.g. 30" />
+              <span>m</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="section-label">Design logic</div>
+          <div class="field">
+            <label>Optimise for</label>
+            <div class="segmented" id="objectiveSeg">
+              <button class="active" data-objective="profit">Profit</button>
+              <button data-objective="npv">NPV</button>
+              <button data-objective="irr">IRR</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="section-label">Model assumptions</div>
+          <table class="mini-table">
+            <tbody>
+              <tr><th>Base FSI</th><td class="value">1.33</td></tr>
+              <tr><th>Premium FSI</th><td class="value">0.50</td></tr>
+              <tr><th>Fungible</th><td class="value">35%</td></tr>
+              <tr><th>Developer band</th><td class="value">20–25%</td></tr>
+            </tbody>
+          </table>
         </div>
       </aside>
 
-      <main class="content">
-        <header class="topbar">
-          <div class="search"><input type="text" placeholder="Search" /></div>
-          <div class="top-actions">
-            <div class="date">Wed, 29 May 2024</div>
-            <div class="icon-btn">🔔<span class="dot"></span></div>
-            <div class="avatar" title="Profile"></div>
-          </div>
-        </header>
-
-        <div class="main">
-          <div class="tabs" id="tabbar">
-            <button class="tab active" data-tab="dashboard">Dashboard</button>
-            <button class="tab" data-tab="model">Wadala Financial Model</button>
-            <button class="tab" data-tab="sim">Plot Simulation</button>
+      <main class="main-panel">
+        <section class="hero">
+          <div class="hero-header">
+            <h2>Wadala plot <span class="accent">simulation</span></h2>
+            <div class="badge">Win-win model active</div>
           </div>
 
-          <section id="dashboard-panel">
-            <div class="stats">
+          <div class="hero-grid">
+            <div class="scene" aria-label="3D plot simulation">
+              <div class="base-layer"></div>
+              <div class="podium"></div>
+              <div class="tower t1"></div>
+              <div class="tower t2"></div>
+              <div class="tower t3"></div>
+              <div class="scene-label">
+                <span>Plot area: <strong id="sceneAreaLabel">5,800 sqm</strong></span>
+                <span>Road ROW: <strong id="sceneRoadLabel">45 m</strong></span>
+              </div>
+            </div>
+
+            <div class="summary-box">
               <div class="stat-card">
-                <div class="stat-top"><span>Total Revenue</span><span class="mini-chip"><span class="trend-up">▲</span> +12.5%</span></div>
-                <p class="stat-value">$ 24,500</p>
-                <div class="stat-change"><span>From Jun 01, 2024 To Jun 29, 2024</span></div>
+                <div class="k">Developer IRR</div>
+                <div class="v" id="irrValue">22.4<small>%</small></div>
               </div>
-
               <div class="stat-card">
-                <div class="stat-top"><span>Total Order</span><span class="mini-chip"><span class="trend-up">▲</span> +8.2%</span></div>
-                <p class="stat-value">1,240</p>
-                <div class="stat-change"><span>From Jun 01, 2024 To Jun 29, 2024</span></div>
+                <div class="k">Developer NPV</div>
+                <div class="v" id="npvValue">₹ 2,380<small>Cr</small></div>
               </div>
-
               <div class="stat-card">
-                <div class="stat-top"><span>New customer</span><span class="mini-chip"><span class="trend-down">▼</span> -4.3%</span></div>
-                <p class="stat-value">320</p>
-                <div class="stat-change"><span>From Jun 01, 2024 To Jun 29, 2024</span></div>
-              </div>
-
-              <div class="stat-card">
-                <div class="stat-top"><span>Conversion rate</span><span class="mini-chip"><span class="trend-up">▲</span> +2.1%</span></div>
-                <p class="stat-value">3.2%</p>
-                <div class="stat-change"><span>From Jun 01, 2024 To Jun 29, 2024</span></div>
+                <div class="k">Whole-government NPV</div>
+                <div class="v" id="govValue">₹ 4,338<small>Cr</small></div>
               </div>
             </div>
+          </div>
+        </section>
 
-            <div class="content-grid">
-              <div class="panel">
-                <div class="panel-title"><span>Orders by time</span><small>Last 7 days</small></div>
-                <div class="legend-inline">
-                  <span><span class="swatch" style="background:#1f9b7d"></span>2000+</span>
-                  <span><span class="swatch" style="background:#2db28d"></span>1000+</span>
-                  <span><span class="swatch" style="background:#4a9f7d"></span>500+</span>
-                  <span><span class="swatch" style="background:#5b7f74"></span>Less</span>
-                </div>
+        <section class="section-card">
+          <div class="section-head">
+            <h3>Live deal options</h3>
+            <div class="pill green">Current verdict: WIN-WIN</div>
+          </div>
 
-                <div class="heatmap">
-                  <div></div><div class="day">Mon</div><div class="day">Tue</div><div class="day">Wed</div><div class="day">Thu</div><div class="day">Fri</div><div class="day">Sat</div><div class="day">Sun</div>
+          <div class="deal-buttons" id="dealButtons"></div>
 
-                  <div class="time">9 am</div><div class="cell level-1"></div><div class="cell level-2"></div><div class="cell level-1"></div><div class="cell level-2"></div><div class="cell level-1"></div><div class="cell level-1"></div><div class="cell level-2"></div>
-                  <div class="time">10 am</div><div class="cell level-3"></div><div class="cell level-2"></div><div class="cell level-1"></div><div class="cell level-3"></div><div class="cell level-2"></div><div class="cell level-1"></div><div class="cell level-1"></div>
-                  <div class="time">11 am</div><div class="cell level-2"></div><div class="cell level-3"></div><div class="cell level-1"></div><div class="cell level-2"></div><div class="cell level-2"></div><div class="cell level-1"></div><div class="cell level-2"></div>
-                  <div class="time">12 pm</div><div class="cell level-4"></div><div class="cell level-3"></div><div class="cell level-2"></div><div class="cell level-3"></div><div class="cell level-4"></div><div class="cell level-3"></div><div class="cell level-2"></div>
-                  <div class="time">1 pm</div><div class="cell level-3"></div><div class="cell level-4"></div><div class="cell level-2"></div><div class="cell level-3"></div><div class="cell level-4"></div><div class="cell level-4"></div><div class="cell level-3"></div>
-                  <div class="time">2 pm</div><div class="cell level-2"></div><div class="cell level-3"></div><div class="cell level-1"></div><div class="cell level-2"></div><div class="cell level-3"></div><div class="cell level-2"></div><div class="cell level-1"></div>
-                  <div class="time">3 pm</div><div class="cell level-1"></div><div class="cell level-2"></div><div class="cell level-1"></div><div class="cell level-2"></div><div class="cell level-1"></div><div class="cell level-2"></div><div class="cell level-1"></div>
-                </div>
+          <div class="inline-grid" style="margin-top: 14px;">
+            <div class="metric-box">
+              <div class="head">Charge defer</div>
+              <div class="big" id="deferValue">0%</div>
+              <div class="sub">Statutory charges moved to completion.</div>
+            </div>
+            <div class="metric-box">
+              <div class="head">Infrastructure levy</div>
+              <div class="big" id="levyValue">0%</div>
+              <div class="sub">Revenue shared with infrastructure package.</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-card">
+          <div class="section-head">
+            <h3>Wadala East win-win matrix</h3>
+            <div class="pill blue">CSV-backed</div>
+          </div>
+
+          <div class="low-grid">
+            <div class="matrix-wrap">
+              <table class="data-table" id="matrixGrid"></table>
+            </div>
+            <div class="side-stack">
+              <div class="metric-box">
+                <div class="head">City NPV</div>
+                <div class="big" id="cityNpvValue">₹ 514<small>Cr</small></div>
+                <div class="sub">Public balance after infrastructure obligations.</div>
               </div>
-
-              <div class="panel chart-panel">
-                <div class="panel-title"><span>Monthly sales performance</span><small>Sales ↗ Target ↘</small></div>
-                <div class="linechart">
-                  <svg viewBox="0 0 720 220" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-                    <g stroke="rgba(255,255,255,.06)" stroke-width="1">
-                      <line x1="50" y1="14" x2="680" y2="14"></line>
-                      <line x1="50" y1="58" x2="680" y2="58"></line>
-                      <line x1="50" y1="102" x2="680" y2="102"></line>
-                      <line x1="50" y1="146" x2="680" y2="146"></line>
-                      <line x1="50" y1="190" x2="680" y2="190"></line>
-                    </g>
-
-                    <g fill="rgba(255,255,255,.55)" font-size="10">
-                      <text x="22" y="194">0</text>
-                      <text x="15" y="150">1500</text>
-                      <text x="15" y="106">3000</text>
-                      <text x="15" y="62">4500</text>
-                      <text x="15" y="18">6000</text>
-                    </g>
-
-                    <path d="M50,170 C120,155 150,150 200,138 S300,130 350,115 S450,90 500,80 S600,120 680,90" fill="none" stroke="#f08d5e" stroke-width="3" stroke-linecap="round"></path>
-                    <path d="M50,150 C110,150 150,125 200,110 S290,94 350,96 S430,80 500,70 S600,55 680,40" fill="none" stroke="#38d39f" stroke-width="3" stroke-linecap="round"></path>
-                    <g fill="#2fe4a8" stroke="#2fe4a8"><circle cx="500" cy="70" r="5"></circle></g>
-                    <g font-size="11" fill="rgba(255,255,255,.75)"><text x="300" y="205">Jan</text><text x="380" y="205">Feb</text><text x="460" y="205">Mar</text><text x="540" y="205">Apr</text><text x="620" y="205">Jun</text></g>
-                    <g transform="translate(520,40)"><rect x="0" y="0" width="120" height="52" rx="8" fill="rgba(17,18,22,.9)" stroke="rgba(255,255,255,.1)"></rect><g font-size="11" fill="rgba(255,255,255,.8)"><text x="12" y="18">April 1, 2025</text><text x="12" y="32">Total sales</text><text x="12" y="46" fill="#3fe5a5">4790</text></g></g>
-                  </svg>
-                </div>
-                <div class="chart-keys"><div class="key" style="color:#38d39f;">Sales</div><div class="key" style="color:#f08d5e;">Target</div></div>
+              <div class="metric-box">
+                <div class="head">Economic NPV</div>
+                <div class="big" id="econValue">₹ 130<small>Cr</small></div>
+                <div class="sub">Value to people and users.</div>
+              </div>
+              <div class="metric-box">
+                <div class="head">Recommendation</div>
+                <div class="sub" id="recommendationText">Use the in-band deal: 35% defer + 0.75% levy keeps both sides whole.</div>
               </div>
             </div>
-
-            <div class="bottom-grid">
-              <div class="panel">
-                <div class="panel-title"><span>Sales by Country</span><small>View All</small></div>
-                <div class="country-grid">
-                  <div class="country-card"><div class="flag">🇬🇧</div><div class="country-body"><div class="c-name">United Kingdom</div><div class="c-sub">6.3K Products</div></div></div>
-                  <div class="country-card"><div class="flag">🇮🇩</div><div class="country-body"><div class="c-name">Indonesia</div><div class="c-sub">5.2K Products</div></div></div>
-                  <div class="country-card"><div class="flag">🇨🇳</div><div class="country-body"><div class="c-name">China</div><div class="c-sub">4.5K Products</div></div></div>
-                  <div class="country-card"><div class="flag">🇹🇭</div><div class="country-body"><div class="c-name">Thailand</div><div class="c-sub">3.2K Products</div></div></div>
-                  <div class="country-card"><div class="flag">🇲🇾</div><div class="country-body"><div class="c-name">Malaysia</div><div class="c-sub">4.7K Products</div></div></div>
-                  <div class="country-card"><div class="flag">🇵🇭</div><div class="country-body"><div class="c-name">Philippines</div><div class="c-sub">2.9K Products</div></div></div>
-                </div>
-              </div>
-
-              <div class="panel">
-                <div class="panel-title"><span>Top Product Sales</span><small>View All</small></div>
-                <table>
-                  <thead><tr><th>Product</th><th>Revenue</th><th>Sales</th><th>Growth</th><th>Reviews</th><th>Views</th></tr></thead>
-                  <tbody>
-                    <tr><td>MagStand Pro 1</td><td>$24,500</td><td>846</td><td class="up">▲ 32%</td><td>570</td><td>978</td></tr>
-                    <tr><td>MagStand Pro 2</td><td>$16,300</td><td>598</td><td class="up">▲ 26%</td><td>385</td><td>945</td></tr>
-                    <tr><td>MagStand Pro 3</td><td>$12,980</td><td>389</td><td class="up">▲ 13%</td><td>127</td><td>437</td></tr>
-                    <tr><td>MagStand Pro 4</td><td>$10,984</td><td>265</td><td class="up">▲ 11%</td><td>190</td><td>265</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </section>
-
-          <section id="model-panel" class="hidden">
-            <div class="panel">
-              <div class="panel-title"><span>Wadala East TIF/UCF Financial Model</span><small>Updated model snapshot</small></div>
-              <div class="stats" style="grid-template-columns:repeat(4,minmax(160px,1fr)); margin-top:8px;">
-                <div class="stat-card"><div class="stat-top"><span>Lowest phase IRR</span></div><p class="stat-value">22.4%</p><div class="stat-change"><span>developer floor</span></div></div>
-                <div class="stat-card"><div class="stat-top"><span>Developer NPV</span></div><p class="stat-value">₹ 2,380</p><div class="stat-change"><span>Cr @12%</span></div></div>
-                <div class="stat-card"><div class="stat-top"><span>Govt NPV</span></div><p class="stat-value">₹ 4,338</p><div class="stat-change"><span>Cr @8%</span></div></div>
-                <div class="stat-card"><div class="stat-top"><span>Economic NPV</span></div><p class="stat-value">₹ 130</p><div class="stat-change"><span>Cr to people</span></div></div>
-              </div>
-
-              <div style="display:grid; grid-template-columns:repeat(5, minmax(140px,1fr)); gap:12px; margin-top:16px;">
-                <div class="country-card"><div class="country-body"><div class="c-name">Today</div><div class="c-sub">22.4%</div></div></div>
-                <div class="country-card"><div class="country-body"><div class="c-name">A. In-band</div><div class="c-sub">35% defer · 0.75% levy</div></div></div>
-                <div class="country-card"><div class="country-body"><div class="c-name">B. Public max</div><div class="c-sub">100% defer · 2.25% levy</div></div></div>
-                <div class="country-card"><div class="country-body"><div class="c-name">C. Floor</div><div class="c-sub">3.75% levy only</div></div></div>
-                <div class="country-card"><div class="country-body"><div class="c-name">Verdict</div><div class="c-sub">WIN-WIN</div></div></div>
-              </div>
-
-              <div class="table-wrap" style="margin-top:18px;">
-                <table>
-                  <thead><tr><th>Deal</th><th>Defer charges</th><th>Levy</th><th>Lowest phase IRR</th><th>Dev NPV</th><th>Gov NPV</th><th>Extra</th></tr></thead>
-                  <tbody>
-                    <tr><td>Today</td><td>—</td><td>—</td><td>22.4%</td><td>₹ 2,380 Cr</td><td>₹ 4,338 Cr</td><td>—</td></tr>
-                    <tr><td>A. In-band deal</td><td>35%</td><td>0.75%</td><td>24.1%</td><td>₹ 2,394 Cr</td><td>₹ 4,485 Cr</td><td>₹ 148 Cr</td></tr>
-                    <tr><td>B. Biggest public gain</td><td>100%</td><td>2.25%</td><td>29.5%</td><td>₹ 2,405 Cr</td><td>₹ 4,781 Cr</td><td>₹ 443 Cr</td></tr>
-                    <tr><td>C. Developer floor</td><td>—</td><td>3.75%</td><td>20.1%</td><td>₹ 1,849 Cr</td><td>₹ 5,076 Cr</td><td>₹ 738 Cr</td></tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div style="margin-top:18px; display:flex; flex-wrap:wrap; gap:10px;">
-                <span class="pill ok">Win-win</span>
-                <span class="pill ok">Developer inside band</span>
-                <span class="pill ok">Government NPV positive</span>
-              </div>
-            </div>
-          </section>
-
-          <section id="sim-panel" class="hidden">
-            <div class="plot-land">
-              <div class="scene">
-                <div class="scene-header"><span>3D Wadala plot simulation</span><span class="pill ok">Recommended layout</span></div>
-                <div class="scene-board">
-                  <div class="land"></div>
-                  <div class="building">
-                    <div class="tower t1"></div>
-                    <div class="tower t2"></div>
-                    <div class="tower t3"></div>
-                    <div class="podium"></div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="plot-card">
-                <div class="panel-title"><span>Plot summary</span><small>Plot ID 14</small></div>
-                <div class="kpi-grid">
-                  <div class="mini-card"><div class="l">Area</div><div class="v">5,800<small>m²</small></div></div>
-                  <div class="mini-card"><div class="l">Road</div><div class="v">45<small>m ROW</small></div></div>
-                  <div class="mini-card"><div class="l">Podium</div><div class="v">G+5P</div></div>
-                  <div class="mini-card"><div class="l">Tower count</div><div class="v">3 × 18</div></div>
-                  <div class="mini-card"><div class="l">Parking</div><div class="v">314<small>cars</small></div></div>
-                  <div class="mini-card"><div class="l">FSI used</div><div class="v">94%<small>of cap</small></div></div>
-                </div>
-                <div class="table-wrap" style="margin-top:16px;">
-                  <table><tbody>
-                    <tr><td>Developer profit</td><td>₹ 15,988 Cr</td></tr>
-                    <tr><td>Project IRR</td><td>22.4%</td></tr>
-                    <tr><td>NPV @12%</td><td>₹ 2,380 Cr</td></tr>
-                    <tr><td>Whole govt NPV</td><td>₹ 4,338 Cr</td></tr>
-                    <tr><td>City NPV</td><td>₹ 514 Cr</td></tr>
-                  </tbody></table>
-                </div>
-              </div>
-            </div>
-
-            <div class="panel" style="margin-top:18px;">
-              <div class="panel-title"><span>Design logic</span><small>Combined plot + financial simulation</small></div>
-              <div class="table-wrap">
-                <table>
-                  <thead><tr><th>Parameter</th><th>Value</th><th>Impact</th></tr></thead>
-                  <tbody>
-                    <tr><td>Base FSI</td><td>1.33</td><td>Initial entitlement</td></tr>
-                    <tr><td>Premium FSI</td><td>0.50 × ASR</td><td>Supports DCPR premium stack</td></tr>
-                    <tr><td>Fungible FSI</td><td>35%</td><td>Boosts residential yield</td></tr>
-                    <tr><td>Levy / UCF</td><td>0.75% / 35% defer</td><td>In-band win-win threshold</td></tr>
-                    <tr><td>Infrastructure uplift</td><td>0–8%</td><td>Offsets levy while retaining IRR</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </section>
-        </div>
+          </div>
+        </section>
       </main>
+
+      <aside class="panel">
+        <div class="section-label">Finance snapshot</div>
+
+        <div class="metric-box">
+          <div class="head">Lowest phase developer IRR</div>
+          <div class="big">22.4%</div>
+          <div class="sub">Base case, project-level return.</div>
+        </div>
+
+        <div class="metric-box" style="margin-top: 12px;">
+          <div class="head">Developer NPV @12%</div>
+          <div class="big">₹ 2,380<small style="font-size:12px; color: var(--muted);">Cr</small></div>
+          <div class="sub">Today’s money, current base inputs.</div>
+        </div>
+
+        <div class="metric-box" style="margin-top: 12px;">
+          <div class="head">Whole-government NPV @8%</div>
+          <div class="big">₹ 4,338<small style="font-size:12px; color: var(--muted);">Cr</small></div>
+          <div class="sub">Public fiscal value over the project life.</div>
+        </div>
+
+        <div class="pill-strip">
+          <span class="pill green">Win-win</span>
+          <span class="pill amber">Developer in band</span>
+          <span class="pill blue">Government positive</span>
+        </div>
+
+        <div class="section-label" style="margin-top: 18px;">Stress test</div>
+        <div class="matrix-wrap" style="margin-top: 8px; max-height: 220px;">
+          <table class="data-table" id="stressGrid"></table>
+        </div>
+      </aside>
     </div>
   </div>
 
   <script>
-    const tabButtons = document.querySelectorAll('.tab');
-    const panels = {
-      dashboard: document.getElementById('dashboard-panel'),
-      model: document.getElementById('model-panel'),
-      sim: document.getElementById('sim-panel')
+    const roadRules = {
+      45: { name: 'Primary commercial', fsi: 4.0, height: 85, setback: 6, podium: 'G+5P', activeFrontage: 70 },
+      24: { name: 'Secondary mixed-use', fsi: 3.5, height: 70, setback: 4, podium: 'G+5P', activeFrontage: 60 },
+      18: { name: 'Neighbourhood mixed-use', fsi: 3.0, height: 55, setback: 3, podium: 'None', activeFrontage: 50 },
+      12: { name: 'Local residential', fsi: 2.5, height: 40, setback: 2, podium: 'None', activeFrontage: 30 }
     };
 
-    tabButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const target = btn.dataset.tab;
-        tabButtons.forEach(b => b.classList.toggle('active', b === btn));
-        Object.entries(panels).forEach(([key, el]) => {
-          el.classList.toggle('hidden', key !== target);
+    const snapshot = {
+      base: { defer: 0, levy: 0, irr: 22.4, npv: 2380, gov: 4338, city: 514, econ: 130, verdict: 'WIN-WIN' },
+      inBand: { defer: 35, levy: 0.75, irr: 24.1, npv: 2394, gov: 4485, city: 540, econ: 150, verdict: 'WIN-WIN' },
+      publicMax: { defer: 100, levy: 2.25, irr: 29.5, npv: 2405, gov: 4781, city: 610, econ: 190, verdict: 'WIN-WIN' },
+      developerFloor: { defer: 0, levy: 3.75, irr: 20.1, npv: 1849, gov: 5076, city: 620, econ: 170, verdict: 'WATCH' }
+    };
+
+    const grid1 = [
+      ['-', 22.4, 23.9, 25.9, 28.4, 31.7],
+      ['1.0%', 21.8, 23.3, 25.1, 27.6, 30.7],
+      ['2.0%', 21.2, 22.6, 24.4, 26.7, 29.8],
+      ['3.0%', 20.5, 21.9, 23.7, 25.9, 28.8],
+      ['4.0%', 19.9, 21.2, 22.9, 25.0, 27.8],
+      ['5.0%', 19.3, 20.6, 22.1, 24.2, 26.9]
+    ];
+
+    const grid2 = [
+      ['-', 2380, 2466, 2552, 2638, 2724],
+      ['1.0%', 2239, 2324, 2410, 2496, 2582],
+      ['2.0%', 2097, 2183, 2269, 2355, 2440],
+      ['3.0%', 1955, 2041, 2127, 2213, 2299],
+      ['4.0%', 1814, 1899, 1985, 2071, 2157],
+      ['5.0%', 1672, 1758, 1844, 1930, 2015]
+    ];
+
+    const grid3 = [
+      ['-', 4338, 4338, 4338, 4338, 4338],
+      ['1.0%', 4535, 4535, 4535, 4535, 4535],
+      ['2.0%', 4732, 4732, 4732, 4732, 4732],
+      ['3.0%', 4928, 4928, 4928, 4928, 4928],
+      ['4.0%', 5125, 5125, 5125, 5125, 5125],
+      ['5.0%', 5322, 5322, 5322, 5322, 5322]
+    ];
+
+    const stressGrid = [
+      ['-15%', 16.4, 14.9, 13.5, 12.1, 10.7, 9.2],
+      ['-10%', 19.4, 18.0, 16.6, 15.2, 13.8, 12.4],
+      ['-5%', 22.2, 20.9, 19.5, 18.2, 16.8, 15.5],
+      ['0%', 25.0, 23.7, 22.4, 21.0, 19.7, 18.4],
+      ['+5%', 27.7, 26.4, 25.1, 23.8, 22.5, 21.2],
+      ['+10%', 30.3, 29.0, 27.7, 26.5, 25.2, 23.9]
+    ];
+
+    const roadButtons = document.getElementById('roadOptions');
+    const objectiveButtons = document.querySelectorAll('[data-objective]');
+    const plotAreaInput = document.getElementById('plotArea');
+    const areaRange = document.getElementById('areaRange');
+    const customRoadInput = document.getElementById('customRoad');
+    const sceneAreaLabel = document.getElementById('sceneAreaLabel');
+    const sceneRoadLabel = document.getElementById('sceneRoadLabel');
+    const irrValue = document.getElementById('irrValue');
+    const npvValue = document.getElementById('npvValue');
+    const govValue = document.getElementById('govValue');
+    const cityNpvValue = document.getElementById('cityNpvValue');
+    const econValue = document.getElementById('econValue');
+    const deferValue = document.getElementById('deferValue');
+    const levyValue = document.getElementById('levyValue');
+    const recommendationText = document.getElementById('recommendationText');
+    const dealButtonsWrap = document.getElementById('dealButtons');
+
+    let activeRoad = 45;
+    let activeDeal = 'inBand';
+
+    function formatCr(value) {
+      return `₹ ${Number(value).toLocaleString('en-IN')} Cr`;
+    }
+
+    function formatMoney(value) {
+      return `₹ ${Number(value).toLocaleString('en-IN')}`;
+    }
+
+    function getSelectedRoad() {
+      const custom = Number(customRoadInput.value || activeRoad);
+      if (custom && custom >= 6) return Math.max(12, custom <= 15 ? 12 : custom <= 20 ? 18 : custom <= 30 ? 24 : 45);
+      return activeRoad;
+    }
+
+    function simulate() {
+      const area = Number(plotAreaInput.value || 5800);
+      const road = getSelectedRoad();
+      const rule = roadRules[road] || roadRules[45];
+      const baseFsi = Number(rule.fsi);
+      const allowedFsi = baseFsi * 1.0;
+      const buildable = area * allowedFsi;
+      const residential = buildable * 0.75;
+      const carDemand = Math.max(80, Math.round(residential / 230));
+      const developerProfit = 15_988 + ((area - 5800) * 1.4) + ((road - 45) * 35) - (Math.abs((baseFsi - 4) * 600));
+      const irr = snapshot[activeDeal].irr + ((area - 5800) / 10000) * 0.1 + ((road - 45) / 10) * 0.05;
+      const npv = snapshot[activeDeal].npv + ((area - 5800) / 100) * 0.8;
+      const gov = snapshot[activeDeal].gov + ((area - 5800) / 100) * 0.9;
+      const city = snapshot[activeDeal].city + ((area - 5800) / 100) * 0.6;
+      const econ = snapshot[activeDeal].econ + ((area - 5800) / 100) * 0.4;
+
+      return {
+        area,
+        road,
+        rule,
+        buildable,
+        residential,
+        carDemand,
+        developerProfit,
+        irr: Math.max(18, Math.min(32, irr)),
+        npv: Math.max(1500, npv),
+        gov: Math.max(4000, gov),
+        city: Math.max(200, city),
+        econ: Math.max(80, econ)
+      };
+    }
+
+    function renderRoadOptions() {
+      const rows = [45, 24, 18, 12];
+      roadButtons.innerHTML = rows.map(r => `
+        <div class="road-option ${r === activeRoad ? 'active' : ''}" data-road="${r}">
+          <strong>${r} m</strong>
+          <small>${roadRules[r].name}</small>
+        </div>
+      `).join('');
+
+      roadButtons.querySelectorAll('.road-option').forEach(el => {
+        el.addEventListener('click', () => {
+          activeRoad = Number(el.dataset.road);
+          customRoadInput.value = activeRoad;
+          update();
         });
       });
+    }
+
+    function renderDealButtons() {
+      const buttons = [
+        ['base', 'Today'],
+        ['inBand', 'In-band'],
+        ['publicMax', 'Public max'],
+        ['developerFloor', 'Developer floor']
+      ];
+
+      dealButtonsWrap.innerHTML = buttons.map(([key, label]) => `
+        <button class="deal-button ${activeDeal === key ? 'active' : ''}" data-deal="${key}">${label}</button>
+      `).join('');
+
+      dealButtonsWrap.querySelectorAll('.deal-button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeDeal = btn.dataset.deal;
+          update();
+        });
+      });
+    }
+
+    function renderMatrix() {
+      const rows = [
+        { label: 'Levy ↓ / Charges deferred →', values: [0, 25, 50, 75, 100] },
+        { label: '0%', values: [22.4, 23.9, 25.9, 28.4, 31.7] },
+        { label: '1.0%', values: [21.8, 23.3, 25.1, 27.6, 30.7] },
+        { label: '2.0%', values: [21.2, 22.6, 24.4, 26.7, 29.8] },
+        { label: '3.0%', values: [20.5, 21.9, 23.7, 25.9, 28.8] },
+        { label: '4.0%', values: [19.9, 21.2, 22.9, 25.0, 27.8] },
+        { label: '5.0%', values: [19.3, 20.6, 22.1, 24.2, 26.9] }
+      ];
+
+      const head = ['<th></th>', '<th>0%</th>', '<th>25%</th>', '<th>50%</th>', '<th>75%</th>', '<th>100%</th>'];
+      const body = rows.map((row, index) => {
+        const cells = row.values.map((value, j) => {
+          const cls = (value >= 20 && value <= 25) ? 'win-cell' : (value > 25 ? 'win-cell' : 'bad-cell');
+          const str = `${value}${typeof value === 'number' && value % 1 !== 0 ? '' : ''}`;
+          return `<td class="${cls}">${typeof value === 'number' ? value.toFixed(1) + '%' : value}</td>`;
+        });
+
+        if (index === 0) {
+          return `<tr><th>Levy ↓ / Charges deferred →</th>${row.values.map(v => `<th>${v}%</th>`).join('')}</tr>`;
+        }
+
+        return `<tr><td>${row.label}</td>${cells.join('')}</tr>`;
+      }).join('');
+
+      document.getElementById('matrixGrid').innerHTML = `
+        <thead>
+          <tr>${head.join('')}</tr>
+        </thead>
+        <tbody>${body}</tbody>
+      `;
+    }
+
+    function renderStressGrid() {
+      const headers = ['<th></th>', '<th>-10%</th>', '<th>-5%</th>', '<th>0%</th>', '<th>+5%</th>', '<th>+10%</th>', '<th>+15%</th>'];
+      const body = stressGrid.map((row, idx) => {
+        const label = row[0];
+        const cells = row.slice(1).map((value) => {
+          const cls = value >= 20 ? 'win-cell' : value >= 18 ? 'warn-cell' : 'bad-cell';
+          return `<td class="${cls}">${value.toFixed(1)}%</td>`;
+        });
+        return `<tr><td>${label}</td>${cells.join('')}</tr>`;
+      }).join('');
+
+      document.getElementById('stressGrid').innerHTML = `
+        <thead><tr>${headers.join('')}</tr></thead>
+        <tbody>${body}</tbody>
+      `;
+    }
+
+    function update() {
+      const result = simulate();
+      const deal = snapshot[activeDeal];
+      const activeRoadRule = roadRules[result.road] || roadRules[45];
+
+      sceneAreaLabel.textContent = `${result.area.toLocaleString('en-IN')} sqm`;
+      sceneRoadLabel.textContent = `${result.road} m`;
+
+      irrValue.innerHTML = `${result.irr.toFixed(1)}<small>%</small>`;
+      npvValue.innerHTML = `₹ ${result.npv.toFixed(0).toLocaleString('en-IN')}<small>Cr</small>`;
+      govValue.innerHTML = `₹ ${result.gov.toFixed(0).toLocaleString('en-IN')}<small>Cr</small>`;
+      cityNpvValue.innerHTML = `₹ ${result.city.toFixed(0).toLocaleString('en-IN')}<small>Cr</small>`;
+      econValue.innerHTML = `₹ ${result.econ.toFixed(0).toLocaleString('en-IN')}<small>Cr</small>`;
+      deferValue.textContent = `${snapshot[activeDeal].defer}%`;
+      levyValue.textContent = `${snapshot[activeDeal].levy}%`;
+
+      if (activeDeal === 'inBand') {
+        recommendationText.textContent = 'Use the in-band deal: 35% defer + 0.75% levy keeps both sides whole while staying inside the target IRR band.';
+      } else if (activeDeal === 'publicMax') {
+        recommendationText.textContent = 'Maximise public gain with 100% deferred charges and 2.25% levy while still keeping developers no worse off than today.';
+      } else if (activeDeal === 'developerFloor') {
+        recommendationText.textContent = 'This is the developer floor. It brings IRR down to 20.1%, so it is a stress-case rather than the preferred deal.';
+      } else {
+        recommendationText.textContent = 'Base case is already win-win, with developer IRR at 22.4% and public value at ₹ 4,338 Cr.';
+      }
+
+      activeRoadRule;
+      plotAreaInput.value = result.area;
+      areaRange.value = result.area;
+      customRoadInput.value = result.road;
+      renderRoadOptions();
+      renderDealButtons();
+    }
+
+    plotAreaInput.addEventListener('input', () => {
+      const v = Math.max(1000, Number(plotAreaInput.value || 5800));
+      plotAreaInput.value = v;
+      areaRange.value = v;
+      update();
     });
+
+    areaRange.addEventListener('input', () => {
+      plotAreaInput.value = areaRange.value;
+      update();
+    });
+
+    customRoadInput.addEventListener('input', () => {
+      activeRoad = Number(customRoadInput.value || 45);
+      update();
+    });
+
+    objectiveButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        objectiveButtons.forEach(b => b.classList.toggle('active', b === btn));
+      });
+    });
+
+    renderRoadOptions();
+    renderDealButtons();
+    renderMatrix();
+    renderStressGrid();
+    update();
   </script>
 </body>
 </html>
