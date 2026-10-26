@@ -3,717 +3,220 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wadala East · Financial & Plot Simulation</title>
+  <title>Wadala East FBC Simulation</title>
   <style>
     :root {
-      --bg: #081218;
-      --bg-2: #0e1a23;
-      --panel: #121d27;
-      --panel-2: #162330;
-      --panel-3: #1b2d39;
-      --line: rgba(255,255,255,0.08);
-      --line-strong: rgba(255,255,255,0.14);
-      --text: #edf3f8;
-      --muted: #9ca9b5;
-      --muted-2: #8191a0;
-      --teal: #59d7c1;
-      --teal-2: #41b9a8;
-      --blue: #73b9ff;
-      --indigo: #8ea8ff;
-      --amber: #ffbf69;
-      --amber-2: #d88d3f;
-      --orange: #ff8b5d;
-      --red: #ff7272;
+      --bg: #08151d;
+      --panel: #111e28;
+      --panel-2: #142936;
+      --panel-3: #1c3040;
+      --line: rgba(255,255,255,0.1);
+      --text: #edf6ff;
+      --muted: #a4b5c5;
+      --teal: #5dd8c5;
       --green: #6fe39d;
-      --green-2: #4fce7d;
-      --shadow: rgba(0,0,0,0.38);
-      --table-head: rgba(255,255,255,0.04);
+      --amber: #f3c76b;
+      --red: #ff7d7d;
+      --violet: #bb9bff;
+      --blue: #73b7ff;
+      --shadow: rgba(0,0,0,0.28);
     }
-
     * { box-sizing: border-box; }
-    html, body { height: 100%; }
+    html, body { margin: 0; height: 100%; }
     body {
-      margin: 0;
-      background:
-        radial-gradient(circle at 15% 20%, rgba(128,190,255,0.18), transparent 20%),
-        linear-gradient(135deg, #e6a469 0%, #b9c7d6 22%, #7aa9d9 52%, #5f8bc0 100%);
-      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, #c4b9a8 0%, #bfd1e2 25%, #7ba5d8 58%, #50759f 100%);
       color: var(--text);
+      font-family: Inter, "Segoe UI", sans-serif;
     }
-
-    .shell {
-      max-width: 1480px;
-      margin: 32px auto;
-      background: rgba(7, 13, 18, 0.82);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 26px;
-      box-shadow: 0 36px 80px rgba(8, 16, 24, 0.35);
-      overflow: hidden;
-      backdrop-filter: blur(6px);
-    }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-      padding: 18px 22px 16px;
-      background: rgba(14, 20, 26, 0.85);
-      border-bottom: 1px solid var(--line);
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-    }
-
-    .brand-mark {
-      width: 24px; height: 24px; border-radius: 8px;
-      background: linear-gradient(135deg, #6fe39d, #2a8a7d);
-      position: relative;
-    }
-    .brand-mark::before {
-      content: "";
-      position: absolute;
-      inset: 5px;
-      border-radius: 4px;
-      border: 2px solid rgba(255,255,255,0.8);
-      border-top-color: transparent;
-      border-left-color: transparent;
-      transform: rotate(45deg);
-    }
-
-    .title-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .eyebrow {
-      font-size: 11px;
-      color: var(--muted);
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-    }
-
-    .title {
-      font-size: clamp(1.5rem, 2vw, 2.3rem);
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      margin: 0;
-    }
-
-    .top-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .top-actions .date { white-space: nowrap; }
-    .notif, .avatar {
-      width: 34px; height: 34px;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.04);
-      display: grid;
-      place-items: center;
-      font-size: 16px;
-    }
-    .avat {
-      width: 34px; height: 34px; border-radius: 50%;
-      background: linear-gradient(135deg, #d4d9de, #66727d);
-      position: relative;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.18);
-    }
-    .avat::before {
-      content: "";
-      position: absolute;
-      inset: 8px 9px 12px;
-      border-radius: 50%;
-      background: #7e5d48;
-      box-shadow: 0 11px 0 8px #cab394;
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: 310px minmax(0, 1fr) 360px;
-      gap: 18px;
-      padding: 18px;
-    }
-
+    .shell { max-width: 1500px; margin: 20px auto; background: rgba(8, 17, 22, 0.88); border: 1px solid var(--line); border-radius: 22px; overflow: hidden; box-shadow: 0 24px 60px var(--shadow); }
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; background: rgba(15,23,30,0.9); border-bottom: 1px solid var(--line); }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark { width: 22px; height: 22px; border-radius: 8px; background: linear-gradient(135deg, var(--teal), #2aa08b); position: relative; }
+    .brand-mark::before { content: ''; position: absolute; inset: 5px; border-radius: 4px; border: 2px solid rgba(255,255,255,0.78); border-top-color: transparent; border-left-color: transparent; transform: rotate(45deg); }
+    .eyebrow { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+    .title { font-size: 15px; font-weight: 800; letter-spacing: -0.03em; }
+    .actions { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 12px; }
+    .chip { border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,0.02); padding: 6px 10px; }
+    .layout { display: grid; grid-template-columns: 300px minmax(0,1fr) 360px; gap: 12px; padding: 12px; }
     .panel {
-      background: rgba(18, 29, 39, 0.85);
+      background: rgba(17,30,40,0.94);
       border: 1px solid var(--line);
       border-radius: 18px;
-      padding: 16px;
-      min-width: 0;
+      padding: 12px;
     }
-
-    .control-group + .control-group { margin-top: 18px; }
-
-    .section-label {
-      font-size: 11px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 12px;
-    }
-    .field label {
-      font-size: 13px;
-      color: var(--muted);
-      font-weight: 600;
-    }
-
+    .section-title { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); font-weight: 800; margin-bottom: 12px; }
+    .field { margin-top: 10px; }
+    .field label { display: block; color: var(--muted); font-size: 12px; margin-bottom: 7px; }
+    .field .value-row { display: flex; justify-content: space-between; color: var(--muted); font-size: 11px; margin-bottom: 5px; }
+    .field .value-row strong { color: var(--text); }
     .input-wrap {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      background: rgba(255,255,255,0.02);
-      padding: 0 10px 0 14px;
-      height: 44px;
+      height: 40px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,0.02); padding: 0 10px 0 12px;
     }
-    .input-wrap input {
-      flex: 1;
-      border: 0;
-      background: transparent;
-      color: var(--text);
-      font-size: 18px;
-      font-weight: 700;
-      outline: none;
-      letter-spacing: -0.02em;
-    }
-    .input-wrap span { color: var(--muted-2); font-size: 12px; }
-
-    input[type="range"] {
-      width: 100%;
-      accent-color: var(--teal);
-    }
-
-    .road-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-    }
-
+    .input-wrap input { width: 100%; border: 0; background: transparent; color: var(--text); font-size: 16px; font-weight: 700; outline: none; }
+    .input-wrap span { font-size: 11px; color: var(--muted); }
+    input[type="range"] { width: 100%; accent-color: var(--teal); }
+    .road-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
     .road-option {
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      background: rgba(255,255,255,0.02);
-      padding: 10px 10px 8px;
-      cursor: pointer;
-      transition: 0.12s ease;
+      border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,0.02); padding: 9px 8px; cursor: pointer; transition: 0.15s ease;
     }
-    .road-option.active {
-      background: rgba(89, 215, 193, 0.12);
-      border-color: rgba(89, 215, 193, 0.4);
-      box-shadow: inset 0 -2px 0 rgba(89, 215, 193, 0.4);
-    }
-    .road-option strong { display: block; font-size: 18px; font-weight: 800; letter-spacing: -0.04em; }
+    .road-option.active { background: rgba(93,216,194,0.12); border-color: rgba(93,216,194,0.5); box-shadow: inset 0 -2px 0 rgba(93,216,194,0.45); }
+    .road-option strong { display: block; font-size: 18px; line-height: 1.1; font-weight: 800; letter-spacing: -0.04em; }
     .road-option small { color: var(--muted); font-size: 11px; }
-
-    .segmented {
-      display: flex;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      overflow: hidden;
-      background: rgba(255,255,255,0.02);
-    }
+    .segmented { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 6px; }
     .segmented button {
-      flex: 1;
-      appearance: none;
-      border: 0;
-      background: transparent;
-      color: var(--muted);
-      padding: 9px 6px;
-      font-weight: 700;
-      cursor: pointer;
+      background: rgba(255,255,255,0.02); color: var(--muted); border: 1px solid var(--line); border-radius: 9px; padding: 8px 6px; font-weight: 700; cursor: pointer;
     }
-    .segmented button.active {
-      background: rgba(89, 215, 193, 0.14);
-      color: var(--text);
-      box-shadow: inset 0 -2px 0 rgba(89, 215, 193, 0.55);
-    }
-
-    .mini-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-
-    .mini-table th, .mini-table td {
-      border-bottom: 1px solid var(--line);
-      padding: 8px 0;
-      text-align: left;
-      font-size: 12px;
-    }
-    .mini-table th {
-      color: var(--muted);
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      font-weight: 700;
-    }
-    .mini-table td.value {
-      text-align: right;
-      font-weight: 700;
-      color: var(--text);
-      letter-spacing: -0.02em;
-    }
-
-    .main-panel {
-      display: grid;
-      grid-template-rows: auto auto auto;
-      gap: 18px;
-      min-width: 0;
-    }
-
-    .hero {
-      background: rgba(18, 29, 39, 0.9);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 18px 18px 16px;
-    }
-
-    .hero-header {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-
-    .hero-header h2 {
-      font-size: clamp(2rem, 2.6vw, 3rem);
-      margin: 0;
-      letter-spacing: -0.06em;
-      font-weight: 800;
-      line-height: 1;
-    }
-    .hero-header h2 .accent { color: var(--teal); }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.8fr);
-      gap: 16px;
-    }
-
-    .scene {
-      position: relative;
-      border-radius: 18px;
-      background: linear-gradient(180deg, rgba(12,16,20,0.9), rgba(12,18,23,0.95));
-      border: 1px solid var(--line);
-      height: 420px;
-      overflow: hidden;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
-    }
-
-    .scene::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at 40% 28%, rgba(97,214,180,0.12), transparent 22%),
-        linear-gradient(180deg, rgba(255,255,255,0.01), transparent 30%);
-      pointer-events: none;
-    }
-
-    .base-layer {
-      position: absolute;
-      inset: 18px 20px 22px 20px;
-      border-radius: 18px;
-      background: linear-gradient(135deg, rgba(27,62,57,0.8), rgba(15,28,27,0.9));
-      transform: perspective(1200px) rotateX(68deg) rotateZ(-22deg);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), 0 30px 32px rgba(0,0,0,0.18);
-      border: 1px solid rgba(99, 224, 193, 0.14);
-    }
-
-    .podium {
-      position: absolute;
-      left: 24%; right: 22%; bottom: 18%; height: 24%;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: linear-gradient(180deg, rgba(116,151,171,.8), rgba(45,69,82,.95));
-      transform: perspective(1200px) rotateX(66deg) rotateZ(-22deg);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
-    }
-
-    .tower {
-      position: absolute;
-      width: 86px;
-      height: 150px;
-      border-radius: 8px 8px 0 0;
-      border: 1px solid rgba(255,255,255,0.12);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08), 0 15px 25px rgba(0,0,0,0.18);
-      background: linear-gradient(180deg, rgba(99,158,255,0.9), rgba(46,81,138,0.86));
-    }
-    .tower::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: repeating-linear-gradient(
-        180deg,
-        rgba(255,255,255,0.12),
-        rgba(255,255,255,0.12) 12px,
-        rgba(255,255,255,0) 12px,
-        rgba(255,255,255,0) 20px
-      );
-      opacity: 0.5;
-    }
-    .tower.t1 { left: 35%; bottom: 23%; }
-    .tower.t2 { left: 48%; bottom: 27%; width: 72px; height: 122px; background: linear-gradient(180deg, rgba(105,228,176,0.92), rgba(41,113,81,0.82)); }
-    .tower.t3 { left: 60%; bottom: 25%; width: 82px; height: 136px; background: linear-gradient(180deg, rgba(255,176,87,0.9), rgba(156,102,35,0.86)); }
-
-    .scene-label {
-      position: absolute;
-      bottom: 12px;
-      left: 18px;
-      right: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      color: var(--muted);
-      font-size: 12px;
-      z-index: 2;
-    }
-
-    .summary-box {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .stat-card {
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.02);
-      border-radius: 16px;
-      padding: 12px 14px;
-      min-height: 96px;
-    }
-    .stat-card .k {
-      color: var(--muted);
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-      font-weight: 700;
-    }
-    .stat-card .v {
-      font-size: clamp(1.6rem, 3vw, 2.2rem);
-      font-weight: 800;
-      letter-spacing: -0.06em;
-      line-height: 1.05;
-    }
-    .stat-card .v small {
-      font-size: 11px;
-      color: var(--muted);
-      margin-left: 4px;
-      letter-spacing: 0.02em;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 700;
-      background: rgba(89,215,193,0.12);
-      color: var(--teal);
-      border: 1px solid rgba(89,215,193,0.25);
-      margin-top: 8px;
-    }
-
-    .inline-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .section-card {
-      background: rgba(18, 29, 39, 0.9);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 16px;
-    }
-
-    .section-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    .section-head h3 {
-      margin: 0;
-      font-size: 18px;
-      letter-spacing: -0.03em;
-    }
-
-    .low-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 18px;
-    }
-
-    .matrix-wrap {
-      overflow: auto;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: rgba(255,255,255,0.02);
-    }
-
-    table.data-table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 560px;
-      font-size: 12px;
-      background: rgba(255,255,255,0.01);
-    }
-    table.data-table thead th {
-      position: sticky;
-      top: 0;
-      background: rgba(18,29,39,0.98);
-      color: var(--muted);
-      border-bottom: 1px solid var(--line);
-      padding: 10px 8px;
-      font-size: 10px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      font-weight: 700;
-      text-align: right;
-    }
-    table.data-table thead th:first-child,
-    table.data-table tbody td:first-child { text-align: left; }
-    table.data-table tbody td {
-      border-bottom: 1px solid var(--line);
-      padding: 8px 8px;
-      text-align: right;
-      white-space: nowrap;
-      color: var(--text);
-      font-variant-numeric: tabular-nums;
-    }
-    table.data-table tbody tr:hover td {
-      background: rgba(255,255,255,0.02);
-    }
-    .win-cell {
-      color: var(--green);
-      font-weight: 700;
-    }
-    .warn-cell {
-      color: var(--amber);
-      font-weight: 700;
-    }
-    .bad-cell {
-      color: var(--red);
-      font-weight: 700;
-    }
-
-    .side-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .metric-box {
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.02);
-      border-radius: 16px;
-      padding: 12px 14px;
-    }
-    .metric-box .head {
-      color: var(--muted);
-      font-size: 10px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-    .metric-box .big {
-      font-size: 2rem;
-      font-weight: 800;
-      letter-spacing: -0.06em;
-      line-height: 1;
-    }
-    .metric-box .sub {
-      color: var(--muted);
-      margin-top: 8px;
-      font-size: 12px;
-    }
-
-    .deal-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
-    }
-    .deal-button {
-      appearance: none;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: rgba(255,255,255,0.02);
-      color: var(--text);
-      padding: 7px 10px;
-      font-weight: 700;
-      font-size: 12px;
-      cursor: pointer;
-    }
-    .deal-button.active {
-      background: rgba(89,215,193,0.12);
-      border-color: rgba(89,215,193,0.35);
-      color: var(--teal);
-    }
-
-    .note {
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.5;
-      margin-top: 12px;
-    }
-
-    .pill-strip {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 12px;
-    }
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 5px 9px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.02);
-      font-size: 11px;
-      color: var(--muted);
-      font-weight: 700;
-    }
-    .pill.green { color: var(--green); background: rgba(111,227,157,0.08); border-color: rgba(111,227,157,0.24); }
-    .pill.amber { color: var(--amber); background: rgba(255,191,105,0.08); border-color: rgba(255,191,105,0.24); }
-    .pill.red { color: var(--red); background: rgba(255,114,114,0.08); border-color: rgba(255,114,114,0.22); }
-    .pill.blue { color: var(--blue); background: rgba(115,185,255,0.08); border-color: rgba(115,185,255,0.24); }
-
-    @media (max-width: 1180px) {
-      .layout { grid-template-columns: 1fr; }
-      .main-panel { order: 1; }
-      .low-grid { grid-template-columns: 1fr; }
-    }
-
-    @media (max-width: 740px) {
-      .shell { margin: 12px; border-radius: 18px; }
-      .topbar { flex-wrap: wrap; }
-      .hero-grid { grid-template-columns: 1fr; }
-      .inline-grid { grid-template-columns: 1fr; }
-      .road-grid { grid-template-columns: 1fr; }
-      .layout { padding: 12px; }
-    }
+    .segmented button.active { background: rgba(93,216,194,0.12); color: var(--text); border-color: rgba(93,216,194,0.5); }
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,0.02); padding: 8px 10px; margin-top: 10px; }
+    .toggle-row span { color: var(--muted); font-size: 12px; }
+    .main-panel { display: grid; grid-template-rows: auto auto; gap: 12px; min-width: 0; }
+    .section-card { background: rgba(17,30,40,0.94); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; }
+    .hero { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(220px, 0.7fr); gap: 12px; }
+    .hero-title { display: flex; justify-content: space-between; align-items: end; margin-bottom: 10px; }
+    .hero-title h2 { margin: 0; font-size: clamp(26px, 3vw, 40px); letter-spacing: -0.06em; }
+    .hero-title .accent { color: var(--teal); }
+    .badge { border-radius: 999px; padding: 5px 8px; font-size: 11px; font-weight: 700; border: 1px solid rgba(93,216,194,0.35); background: rgba(93,216,194,0.12); color: var(--teal); }
+    .site-wrap { position: relative; border: 1px solid var(--line); border-radius: 14px; background: linear-gradient(180deg, rgba(11,18,22,0.9), rgba(13,20,25,0.96)); height: 420px; overflow: hidden; }
+    .site-wrap svg { width: 100%; height: 100%; display: block; }
+    .site-label { position: absolute; left: 12px; right: 12px; bottom: 12px; display: flex; justify-content: space-between; color: var(--muted); font-size: 11px; }
+    .summary-box { display: grid; grid-template-rows: repeat(3, minmax(0,1fr)); gap: 10px; }
+    .stat-card { border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,0.02); padding: 12px 14px; }
+    .stat-card .k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); font-weight: 700; }
+    .stat-card .v { margin-top: 8px; font-size: clamp(22px, 3vw, 32px); font-weight: 800; letter-spacing: -0.05em; }
+    .stat-card .v small { color: var(--muted); font-size: 12px; }
+    .metrics-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; margin-top: 12px; }
+    .metric-box { border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,0.02); padding: 12px 14px; }
+    .metric-box .head { font-size: 10px; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; font-weight: 700; }
+    .metric-box .big { font-size: 28px; font-weight: 800; margin-top: 8px; letter-spacing: -0.05em; }
+    .metric-box .sub { margin-top: 8px; color: var(--muted); font-size: 12px; }
+    .matrix-wrap { border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,0.02); overflow: auto; }
+    table.data-table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 12px; }
+    table.data-table th, table.data-table td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: right; }
+    table.data-table th:first-child, table.data-table td:first-child { text-align: left; }
+    table.data-table th { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+    .win { color: var(--green); font-weight: 700; }
+    .warn { color: var(--amber); font-weight: 700; }
+    .bad { color: var(--red); font-weight: 700; }
+    .list-panel { max-height: 260px; overflow: auto; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,0.02); }
+    table.list-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    table.list-table th, table.list-table td { padding: 8px 8px; border-bottom: 1px solid var(--line); }
+    table.list-table th { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+    table.list-table tbody tr { cursor: pointer; }
+    table.list-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+    table.list-table tbody tr.selected { background: rgba(93,216,194,0.12); }
+    .pill { display: inline-block; padding: 4px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+    .pill.green { color: var(--green); border: 1px solid rgba(111,227,157,0.25); background: rgba(111,227,157,0.08); }
+    .pill.blue { color: var(--blue); border: 1px solid rgba(115,183,255,0.25); background: rgba(115,183,255,0.08); }
+    .status-pill { display: inline-block; min-width: 52px; text-align: center; border-radius: 999px; font-size: 10px; border: 1px solid var(--line); font-weight: 700; padding: 3px 7px; }
+    .status-pill.ok { color: var(--green); background: rgba(111,227,157,0.08); border-color: rgba(111,227,157,0.25); }
+    .status-pill.warn { color: var(--amber); background: rgba(243,199,107,0.08); border-color: rgba(243,199,107,0.25); }
+    .status-pill.bad { color: var(--red); background: rgba(255,125,125,0.08); border-color: rgba(255,125,125,0.25); }
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    button.primary, button.secondary { border-radius: 10px; border: 1px solid var(--line); background: rgba(255,255,255,0.02); color: var(--text); padding: 8px 10px; font-weight: 700; cursor: pointer; }
+    button.primary { background: rgba(93,216,194,0.12); border-color: rgba(93,216,194,0.45); color: var(--teal); }
+    @media (max-width: 1200px) { .layout { grid-template-columns: 1fr; } .hero { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
   <div class="shell">
-    <div class="topbar">
+    <header class="topbar">
       <div class="brand">
         <div class="brand-mark"></div>
-        <div class="title-wrap">
+        <div>
           <div class="eyebrow">Wadala East</div>
-          <div style="font-size: 14px; font-weight: 800; letter-spacing: -0.02em;">Plot + Finance Console</div>
+          <div class="title">FBC Simulation</div>
         </div>
       </div>
-
-      <div class="top-actions">
-        <div class="date">Wed, 29 May 2024</div>
-        <div class="notif">🔔</div>
-        <div class="avat" title="Profile"></div>
+      <div class="actions">
+        <span class="chip">Selected: <strong id="headerSelected">None</strong></span>
+        <span class="chip">ROW: <strong id="headerRow">45 m</strong></span>
       </div>
-    </div>
+    </header>
 
     <div class="layout">
       <aside class="panel">
-        <div class="section-label">Control panel</div>
+        <div class="section-title">Controls</div>
 
-        <div class="control-group">
-          <div class="field">
-            <label>Plot area</label>
-            <div class="input-wrap">
-              <input id="plotArea" type="number" value="5800" min="1000" max="30000" step="50" />
-              <span>sqm</span>
-            </div>
-            <input id="areaRange" type="range" min="1000" max="30000" step="100" value="5800" />
+        <div class="field">
+          <label>Plot area</label>
+          <div class="input-wrap">
+            <input id="plotArea" type="number" value="5800" min="1000" max="25000" step="50" />
+            <span>sqm</span>
+          </div>
+          <input id="areaSlider" type="range" value="5800" min="1000" max="25000" step="50" />
+        </div>
+
+        <div class="field">
+          <div class="section-title" style="margin: 18px 0 8px;">Road frontage</div>
+          <div class="road-grid" id="roadGrid"></div>
+          <div class="input-wrap" style="margin-top: 10px;">
+            <input id="customRow" type="number" value="45" min="12" max="45" step="1" />
+            <span>m</span>
           </div>
         </div>
 
-        <div class="control-group">
-          <div class="section-label" style="margin-bottom: 8px;">Road frontage</div>
-          <div class="road-grid" id="roadOptions"></div>
-          <div class="field" style="margin-top: 10px;">
-            <label>Custom road width</label>
-            <div class="input-wrap" style="height: 38px;">
-              <input id="customRoad" type="number" value="45" min="6" step="1" placeholder="e.g. 30" />
-              <span>m</span>
-            </div>
+        <div class="field" style="margin-top: 18px;">
+          <label>Design logic</label>
+          <div class="segmented" id="objectiveSeg">
+            <button class="active" data-objective="profit">Profit</button>
+            <button data-objective="npv">NPV</button>
+            <button data-objective="irr">IRR</button>
           </div>
         </div>
 
-        <div class="control-group">
-          <div class="section-label">Design logic</div>
-          <div class="field">
-            <label>Optimise for</label>
-            <div class="segmented" id="objectiveSeg">
-              <button class="active" data-objective="profit">Profit</button>
-              <button data-objective="npv">NPV</button>
-              <button data-objective="irr">IRR</button>
-            </div>
-          </div>
+        <div class="field" style="margin-top: 18px;">
+          <label>Regulations</label>
+
+          <div class="value-row"><span>FSI</span><strong id="val_fsi">3.50</strong></div>
+          <input id="s_fsi" type="range" min="0.5" max="5" step="0.05" value="3.5" />
+
+          <div class="value-row" style="margin-top: 10px;"><span>Height</span><strong id="val_h">70 m</strong></div>
+          <input id="s_h" type="range" min="20" max="120" step="1" value="70" />
+
+          <div class="value-row" style="margin-top: 10px;"><span>Front setback</span><strong id="val_front">4.0 m</strong></div>
+          <input id="s_front" type="range" min="1" max="15" step="0.5" value="4" />
+
+          <div class="value-row" style="margin-top: 10px;"><span>Side setback</span><strong id="val_side">4.0 m</strong></div>
+          <input id="s_side" type="range" min="1" max="15" step="0.5" value="4" />
+
+          <div class="value-row" style="margin-top: 10px;"><span>Footpath width</span><strong id="val_fp">3.5 m</strong></div>
+          <input id="s_fp" type="range" min="1" max="8" step="0.1" value="3.5" />
+
+          <div class="value-row" style="margin-top: 10px;"><span>MUZ / utility strip</span><strong id="val_muz">0.0 m</strong></div>
+          <input id="s_muz" type="range" min="0" max="8" step="0.5" value="0" />
+
+          <div class="value-row" style="margin-top: 10px;"><span>Active frontage</span><strong id="val_act">60%</strong></div>
+          <input id="s_act" type="range" min="10" max="100" step="1" value="60" />
+
+          <div class="value-row" style="margin-top: 10px;"><span>Ground-floor transparency</span><strong id="val_trans">50%</strong></div>
+          <input id="s_trans" type="range" min="10" max="100" step="1" value="50" />
+
+          <div class="value-row" style="margin-top: 10px;"><span>Green proportion</span><strong id="val_green">30%</strong></div>
+          <input id="s_green" type="range" min="0" max="60" step="1" value="30" />
+
+          <div class="value-row" style="margin-top: 10px;"><span>Leftover / movement</span><strong id="val_left">20%</strong></div>
+          <input id="s_left" type="range" min="0" max="50" step="1" value="20" />
         </div>
 
-        <div class="control-group">
-          <div class="section-label">Model assumptions</div>
-          <table class="mini-table">
-            <tbody>
-              <tr><th>Base FSI</th><td class="value">1.33</td></tr>
-              <tr><th>Premium FSI</th><td class="value">0.50</td></tr>
-              <tr><th>Fungible</th><td class="value">35%</td></tr>
-              <tr><th>Developer band</th><td class="value">20–25%</td></tr>
-            </tbody>
-          </table>
+        <div class="toggle-row">
+          <span>Build-to-line</span>
+          <input id="s_btl" type="checkbox" checked />
         </div>
       </aside>
 
       <main class="main-panel">
-        <section class="hero">
-          <div class="hero-header">
+        <section class="section-card">
+          <div class="hero-title">
             <h2>Wadala plot <span class="accent">simulation</span></h2>
-            <div class="badge">Win-win model active</div>
+            <span class="badge">Road-aligned site plan</span>
           </div>
 
-          <div class="hero-grid">
-            <div class="scene" aria-label="3D plot simulation">
-              <div class="base-layer"></div>
-              <div class="podium"></div>
-              <div class="tower t1"></div>
-              <div class="tower t2"></div>
-              <div class="tower t3"></div>
-              <div class="scene-label">
-                <span>Plot area: <strong id="sceneAreaLabel">5,800 sqm</strong></span>
-                <span>Road ROW: <strong id="sceneRoadLabel">45 m</strong></span>
+          <div class="hero">
+            <div class="site-wrap">
+              <svg id="siteSvg" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet"></svg>
+              <div class="site-label">
+                <span>Plot area: <strong id="sceneArea">5,800 sqm</strong></span>
+                <span>Governing ROW: <strong id="sceneRow">45 m</strong></span>
               </div>
             </div>
 
@@ -735,360 +238,531 @@
         </section>
 
         <section class="section-card">
-          <div class="section-head">
-            <h3>Live deal options</h3>
-            <div class="pill green">Current verdict: WIN-WIN</div>
+          <div class="hero-title" style="margin-bottom: 0;">
+            <h2 style="font-size: 20px;">All plots KPI summary</h2>
+            <span class="pill blue">Plot-wise</span>
           </div>
-
-          <div class="deal-buttons" id="dealButtons"></div>
-
-          <div class="inline-grid" style="margin-top: 14px;">
-            <div class="metric-box">
-              <div class="head">Charge defer</div>
-              <div class="big" id="deferValue">0%</div>
-              <div class="sub">Statutory charges moved to completion.</div>
-            </div>
-            <div class="metric-box">
-              <div class="head">Infrastructure levy</div>
-              <div class="big" id="levyValue">0%</div>
-              <div class="sub">Revenue shared with infrastructure package.</div>
-            </div>
-          </div>
-        </section>
-
-        <section class="section-card">
-          <div class="section-head">
-            <h3>Wadala East win-win matrix</h3>
-            <div class="pill blue">CSV-backed</div>
-          </div>
-
-          <div class="low-grid">
-            <div class="matrix-wrap">
-              <table class="data-table" id="matrixGrid"></table>
-            </div>
-            <div class="side-stack">
-              <div class="metric-box">
-                <div class="head">City NPV</div>
-                <div class="big" id="cityNpvValue">₹ 514<small>Cr</small></div>
-                <div class="sub">Public balance after infrastructure obligations.</div>
-              </div>
-              <div class="metric-box">
-                <div class="head">Economic NPV</div>
-                <div class="big" id="econValue">₹ 130<small>Cr</small></div>
-                <div class="sub">Value to people and users.</div>
-              </div>
-              <div class="metric-box">
-                <div class="head">Recommendation</div>
-                <div class="sub" id="recommendationText">Use the in-band deal: 35% defer + 0.75% levy keeps both sides whole.</div>
-              </div>
-            </div>
+          <div class="matrix-wrap" style="margin-top: 12px;">
+            <table class="data-table" id="plotKpiTable"></table>
           </div>
         </section>
       </main>
 
       <aside class="panel">
-        <div class="section-label">Finance snapshot</div>
-
-        <div class="metric-box">
-          <div class="head">Lowest phase developer IRR</div>
-          <div class="big">22.4%</div>
-          <div class="sub">Base case, project-level return.</div>
+        <div class="section-title">Actions</div>
+        <div class="btn-row">
+          <button class="primary" id="designWholeSite">Design whole site</button>
+          <button class="secondary" id="blankSite">Blank site</button>
+        </div>
+        <div class="btn-row">
+          <button class="secondary" id="deselectPlot">Deselect plot</button>
+          <button class="secondary" id="resetPlot">Reset plot</button>
         </div>
 
-        <div class="metric-box" style="margin-top: 12px;">
-          <div class="head">Developer NPV @12%</div>
-          <div class="big">₹ 2,380<small style="font-size:12px; color: var(--muted);">Cr</small></div>
-          <div class="sub">Today’s money, current base inputs.</div>
+        <div class="field" style="margin-top: 18px;">
+          <div class="section-title">All plots</div>
+          <div class="list-panel">
+            <table class="list-table">
+              <thead>
+                <tr><th>Plot</th><th>ROW</th><th>Status</th></tr>
+              </thead>
+              <tbody id="plotList"></tbody>
+            </table>
+          </div>
         </div>
 
-        <div class="metric-box" style="margin-top: 12px;">
-          <div class="head">Whole-government NPV @8%</div>
-          <div class="big">₹ 4,338<small style="font-size:12px; color: var(--muted);">Cr</small></div>
-          <div class="sub">Public fiscal value over the project life.</div>
+        <div class="field" style="margin-top: 18px;">
+          <div class="section-title">Selected plot</div>
+          <div id="selectedDetails" class="metric-box">
+            <div class="head">No plot selected</div>
+            <div class="sub">Choose a plot from the map or plot list.</div>
+          </div>
         </div>
 
-        <div class="pill-strip">
-          <span class="pill green">Win-win</span>
-          <span class="pill amber">Developer in band</span>
-          <span class="pill blue">Government positive</span>
-        </div>
-
-        <div class="section-label" style="margin-top: 18px;">Stress test</div>
-        <div class="matrix-wrap" style="margin-top: 8px; max-height: 220px;">
-          <table class="data-table" id="stressGrid"></table>
+        <div class="field" style="margin-top: 18px;">
+          <div class="section-title">Finance snapshot</div>
+          <div class="metric-box" style="margin-bottom: 8px;">
+            <div class="head">Developer IRR</div>
+            <div class="big" style="font-size: 26px;">22.4%</div>
+            <div class="sub">Base case investment return.</div>
+          </div>
+          <div class="metric-box" style="margin-bottom: 8px;">
+            <div class="head">Developer NPV</div>
+            <div class="big" style="font-size: 26px;">₹ 2,380<small style="font-size:12px;color:var(--muted)">Cr</small></div>
+            <div class="sub">Current assumptions.</div>
+          </div>
+          <div class="metric-box">
+            <div class="head">Whole-government NPV</div>
+            <div class="big" style="font-size: 26px;">₹ 4,338<small style="font-size:12px;color:var(--muted)">Cr</small></div>
+            <div class="sub">Public value over project life.</div>
+          </div>
         </div>
       </aside>
     </div>
   </div>
 
   <script>
-    const roadRules = {
-      45: { name: 'Primary commercial', fsi: 4.0, height: 85, setback: 6, podium: 'G+5P', activeFrontage: 70 },
-      24: { name: 'Secondary mixed-use', fsi: 3.5, height: 70, setback: 4, podium: 'G+5P', activeFrontage: 60 },
-      18: { name: 'Neighbourhood mixed-use', fsi: 3.0, height: 55, setback: 3, podium: 'None', activeFrontage: 50 },
-      12: { name: 'Local residential', fsi: 2.5, height: 40, setback: 2, podium: 'None', activeFrontage: 30 }
+    const ROW_RULES = {
+      45: { name: 'Primary commercial', fsi: 4.0, height: 85, setback: 6, footpath: 3.5, muz: 0, active: 70, transparency: 60, green: 30, left: 20, btl: true },
+      24: { name: 'Secondary mixed-use', fsi: 3.5, height: 70, setback: 4, footpath: 4.0, muz: 0, active: 60, transparency: 50, green: 30, left: 20, btl: true },
+      18: { name: 'Neighbourhood mixed-use', fsi: 3.0, height: 55, setback: 3, footpath: 3.0, muz: 0, active: 50, transparency: 40, green: 20, left: 20, btl: false },
+      12: { name: 'Local residential', fsi: 2.5, height: 40, setback: 2, footpath: 1.8, muz: 0, active: 30, transparency: 30, green: 20, left: 20, btl: false }
     };
 
-    const snapshot = {
-      base: { defer: 0, levy: 0, irr: 22.4, npv: 2380, gov: 4338, city: 514, econ: 130, verdict: 'WIN-WIN' },
-      inBand: { defer: 35, levy: 0.75, irr: 24.1, npv: 2394, gov: 4485, city: 540, econ: 150, verdict: 'WIN-WIN' },
-      publicMax: { defer: 100, levy: 2.25, irr: 29.5, npv: 2405, gov: 4781, city: 610, econ: 190, verdict: 'WIN-WIN' },
-      developerFloor: { defer: 0, levy: 3.75, irr: 20.1, npv: 1849, gov: 5076, city: 620, econ: 170, verdict: 'WATCH' }
+    const state = {
+      selectedPlotId: null,
+      row: 45,
+      objective: 'profit',
+      controls: {
+        area: 5800,
+        fsi: 3.5,
+        h: 70,
+        front: 4,
+        side: 4,
+        fp: 3.5,
+        muz: 0,
+        act: 60,
+        trans: 50,
+        green: 30,
+        left: 20,
+        btl: true
+      }
     };
 
-    const grid1 = [
-      ['-', 22.4, 23.9, 25.9, 28.4, 31.7],
-      ['1.0%', 21.8, 23.3, 25.1, 27.6, 30.7],
-      ['2.0%', 21.2, 22.6, 24.4, 26.7, 29.8],
-      ['3.0%', 20.5, 21.9, 23.7, 25.9, 28.8],
-      ['4.0%', 19.9, 21.2, 22.9, 25.0, 27.8],
-      ['5.0%', 19.3, 20.6, 22.1, 24.2, 26.9]
-    ];
+    let siteData = null;
 
-    const grid2 = [
-      ['-', 2380, 2466, 2552, 2638, 2724],
-      ['1.0%', 2239, 2324, 2410, 2496, 2582],
-      ['2.0%', 2097, 2183, 2269, 2355, 2440],
-      ['3.0%', 1955, 2041, 2127, 2213, 2299],
-      ['4.0%', 1814, 1899, 1985, 2071, 2157],
-      ['5.0%', 1672, 1758, 1844, 1930, 2015]
-    ];
-
-    const grid3 = [
-      ['-', 4338, 4338, 4338, 4338, 4338],
-      ['1.0%', 4535, 4535, 4535, 4535, 4535],
-      ['2.0%', 4732, 4732, 4732, 4732, 4732],
-      ['3.0%', 4928, 4928, 4928, 4928, 4928],
-      ['4.0%', 5125, 5125, 5125, 5125, 5125],
-      ['5.0%', 5322, 5322, 5322, 5322, 5322]
-    ];
-
-    const stressGrid = [
-      ['-15%', 16.4, 14.9, 13.5, 12.1, 10.7, 9.2],
-      ['-10%', 19.4, 18.0, 16.6, 15.2, 13.8, 12.4],
-      ['-5%', 22.2, 20.9, 19.5, 18.2, 16.8, 15.5],
-      ['0%', 25.0, 23.7, 22.4, 21.0, 19.7, 18.4],
-      ['+5%', 27.7, 26.4, 25.1, 23.8, 22.5, 21.2],
-      ['+10%', 30.3, 29.0, 27.7, 26.5, 25.2, 23.9]
-    ];
-
-    const roadButtons = document.getElementById('roadOptions');
-    const objectiveButtons = document.querySelectorAll('[data-objective]');
-    const plotAreaInput = document.getElementById('plotArea');
-    const areaRange = document.getElementById('areaRange');
-    const customRoadInput = document.getElementById('customRoad');
-    const sceneAreaLabel = document.getElementById('sceneAreaLabel');
-    const sceneRoadLabel = document.getElementById('sceneRoadLabel');
-    const irrValue = document.getElementById('irrValue');
-    const npvValue = document.getElementById('npvValue');
-    const govValue = document.getElementById('govValue');
-    const cityNpvValue = document.getElementById('cityNpvValue');
-    const econValue = document.getElementById('econValue');
-    const deferValue = document.getElementById('deferValue');
-    const levyValue = document.getElementById('levyValue');
-    const recommendationText = document.getElementById('recommendationText');
-    const dealButtonsWrap = document.getElementById('dealButtons');
-
-    let activeRoad = 45;
-    let activeDeal = 'inBand';
-
-    function formatCr(value) {
-      return `₹ ${Number(value).toLocaleString('en-IN')} Cr`;
+    function arcPoints(start, through, end, stepDeg = 4) {
+      const [x1, y1] = start;
+      const [x2, y2] = through;
+      const [x3, y3] = end;
+      const det = 2 * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2));
+      if (Math.abs(det) < 1e-9) return [start, through, end];
+      const s1 = x1 * x1 + y1 * y1;
+      const s2 = x2 * x2 + y2 * y2;
+      const s3 = x3 * x3 + y3 * y3;
+      const ux = (s1 * (y2 - y3) + s2 * (y3 - y1) + s3 * (y1 - y2)) / det;
+      const uy = (s1 * (x3 - x2) + s2 * (x1 - x3) + s3 * (x2 - x1)) / det;
+      const r = Math.hypot(x1 - ux, y1 - uy);
+      const a0 = Math.atan2(y1 - uy, x1 - ux);
+      const am = Math.atan2(y2 - uy, x2 - ux);
+      const a1 = Math.atan2(y3 - uy, x3 - ux);
+      const ccw = (a1 - a0 + 2 * Math.PI) % (2 * Math.PI);
+      const mid = (am - a0 + 2 * Math.PI) % (2 * Math.PI);
+      const delta = mid <= ccw + 1e-9 ? ccw : -((a0 - a1 + 2 * Math.PI) % (2 * Math.PI));
+      const n = Math.max(2, Math.ceil(Math.abs(delta) / (stepDeg * Math.PI / 180)));
+      const out = [];
+      for (let i = 0; i <= n; i++) {
+        const t = i / n;
+        const a = a0 + delta * t;
+        out.push([ux + r * Math.cos(a), uy + r * Math.sin(a)]);
+      }
+      return out;
     }
 
-    function formatMoney(value) {
-      return `₹ ${Number(value).toLocaleString('en-IN')}`;
-    }
-
-    function getSelectedRoad() {
-      const custom = Number(customRoadInput.value || activeRoad);
-      if (custom && custom >= 6) return Math.max(12, custom <= 15 ? 12 : custom <= 20 ? 18 : custom <= 30 ? 24 : 45);
-      return activeRoad;
-    }
-
-    function simulate() {
-      const area = Number(plotAreaInput.value || 5800);
-      const road = getSelectedRoad();
-      const rule = roadRules[road] || roadRules[45];
-      const baseFsi = Number(rule.fsi);
-      const allowedFsi = baseFsi * 1.0;
-      const buildable = area * allowedFsi;
-      const residential = buildable * 0.75;
-      const carDemand = Math.max(80, Math.round(residential / 230));
-      const developerProfit = 15_988 + ((area - 5800) * 1.4) + ((road - 45) * 35) - (Math.abs((baseFsi - 4) * 600));
-      const irr = snapshot[activeDeal].irr + ((area - 5800) / 10000) * 0.1 + ((road - 45) / 10) * 0.05;
-      const npv = snapshot[activeDeal].npv + ((area - 5800) / 100) * 0.8;
-      const gov = snapshot[activeDeal].gov + ((area - 5800) / 100) * 0.9;
-      const city = snapshot[activeDeal].city + ((area - 5800) / 100) * 0.6;
-      const econ = snapshot[activeDeal].econ + ((area - 5800) / 100) * 0.4;
-
-      return {
-        area,
-        road,
-        rule,
-        buildable,
-        residential,
-        carDemand,
-        developerProfit,
-        irr: Math.max(18, Math.min(32, irr)),
-        npv: Math.max(1500, npv),
-        gov: Math.max(4000, gov),
-        city: Math.max(200, city),
-        econ: Math.max(80, econ)
-      };
-    }
-
-    function renderRoadOptions() {
-      const rows = [45, 24, 18, 12];
-      roadButtons.innerHTML = rows.map(r => `
-        <div class="road-option ${r === activeRoad ? 'active' : ''}" data-road="${r}">
-          <strong>${r} m</strong>
-          <small>${roadRules[r].name}</small>
-        </div>
-      `).join('');
-
-      roadButtons.querySelectorAll('.road-option').forEach(el => {
-        el.addEventListener('click', () => {
-          activeRoad = Number(el.dataset.road);
-          customRoadInput.value = activeRoad;
-          update();
-        });
-      });
-    }
-
-    function renderDealButtons() {
-      const buttons = [
-        ['base', 'Today'],
-        ['inBand', 'In-band'],
-        ['publicMax', 'Public max'],
-        ['developerFloor', 'Developer floor']
-      ];
-
-      dealButtonsWrap.innerHTML = buttons.map(([key, label]) => `
-        <button class="deal-button ${activeDeal === key ? 'active' : ''}" data-deal="${key}">${label}</button>
-      `).join('');
-
-      dealButtonsWrap.querySelectorAll('.deal-button').forEach(btn => {
-        btn.addEventListener('click', () => {
-          activeDeal = btn.dataset.deal;
-          update();
-        });
-      });
-    }
-
-    function renderMatrix() {
-      const rows = [
-        { label: 'Levy ↓ / Charges deferred →', values: [0, 25, 50, 75, 100] },
-        { label: '0%', values: [22.4, 23.9, 25.9, 28.4, 31.7] },
-        { label: '1.0%', values: [21.8, 23.3, 25.1, 27.6, 30.7] },
-        { label: '2.0%', values: [21.2, 22.6, 24.4, 26.7, 29.8] },
-        { label: '3.0%', values: [20.5, 21.9, 23.7, 25.9, 28.8] },
-        { label: '4.0%', values: [19.9, 21.2, 22.9, 25.0, 27.8] },
-        { label: '5.0%', values: [19.3, 20.6, 22.1, 24.2, 26.9] }
-      ];
-
-      const head = ['<th></th>', '<th>0%</th>', '<th>25%</th>', '<th>50%</th>', '<th>75%</th>', '<th>100%</th>'];
-      const body = rows.map((row, index) => {
-        const cells = row.values.map((value, j) => {
-          const cls = (value >= 20 && value <= 25) ? 'win-cell' : (value > 25 ? 'win-cell' : 'bad-cell');
-          const str = `${value}${typeof value === 'number' && value % 1 !== 0 ? '' : ''}`;
-          return `<td class="${cls}">${typeof value === 'number' ? value.toFixed(1) + '%' : value}</td>`;
-        });
-
-        if (index === 0) {
-          return `<tr><th>Levy ↓ / Charges deferred →</th>${row.values.map(v => `<th>${v}%</th>`).join('')}</tr>`;
+    function decodeRing(ring) {
+      const out = [];
+      let cur = null;
+      for (const item of ring) {
+        if (item && typeof item === 'object' && Array.isArray(item.c)) {
+          const c = item.c;
+          if (c.length >= 2 && cur) {
+            const arc = arcPoints(cur, c[1], c[0]);
+            out.push(...arc.slice(1));
+            cur = c[0];
+          } else if (c.length) {
+            cur = c[0];
+            out.push(cur);
+          }
+        } else if (Array.isArray(item) && item.length >= 2) {
+          const p = [Number(item[0]), Number(item[1])];
+          if (!cur || p[0] !== cur[0] || p[1] !== cur[1]) out.push(p);
+          cur = p;
         }
-
-        return `<tr><td>${row.label}</td>${cells.join('')}</tr>`;
-      }).join('');
-
-      document.getElementById('matrixGrid').innerHTML = `
-        <thead>
-          <tr>${head.join('')}</tr>
-        </thead>
-        <tbody>${body}</tbody>
-      `;
+      }
+      return out;
     }
 
-    function renderStressGrid() {
-      const headers = ['<th></th>', '<th>-10%</th>', '<th>-5%</th>', '<th>0%</th>', '<th>+5%</th>', '<th>+10%</th>', '<th>+15%</th>'];
-      const body = stressGrid.map((row, idx) => {
-        const label = row[0];
-        const cells = row.slice(1).map((value) => {
-          const cls = value >= 20 ? 'win-cell' : value >= 18 ? 'warn-cell' : 'bad-cell';
-          return `<td class="${cls}">${value.toFixed(1)}%</td>`;
-        });
-        return `<tr><td>${label}</td>${cells.join('')}</tr>`;
-      }).join('');
-
-      document.getElementById('stressGrid').innerHTML = `
-        <thead><tr>${headers.join('')}</tr></thead>
-        <tbody>${body}</tbody>
-      `;
+    function polygonArea(ring) {
+      let a = 0;
+      for (let i = 0; i < ring.length; i++) {
+        const p = ring[i];
+        const q = ring[(i+1) % ring.length];
+        a += p[0] * q[1] - q[0] * p[1];
+      }
+      return Math.abs(a) / 2;
     }
 
-    function update() {
-      const result = simulate();
-      const deal = snapshot[activeDeal];
-      const activeRoadRule = roadRules[result.road] || roadRules[45];
+    function centroid(ring) {
+      let area = 0, cx = 0, cy = 0;
+      for (let i = 0; i < ring.length; i++) {
+        const p = ring[i];
+        const q = ring[(i+1) % ring.length];
+        const cross = p[0] * q[1] - q[0] * p[1];
+        area += cross;
+        cx += (p[0] + q[0]) * cross;
+        cy += (p[1] + q[1]) * cross;
+      }
+      area /= 2;
+      return Math.abs(area) < 1e-9 ? [ring[0][0], ring[0][1]] : [cx / (6 * area), cy / (6 * area)];
+    }
 
-      sceneAreaLabel.textContent = `${result.area.toLocaleString('en-IN')} sqm`;
-      sceneRoadLabel.textContent = `${result.road} m`;
+    function getPlotRow(plot) {
+      const rowFromAttr = Number(plot.attributes && plot.attributes.Road_Width);
+      if (rowFromAttr && ROW_RULES[rowFromAttr]) return rowFromAttr;
+      return 45;
+    }
 
-      irrValue.innerHTML = `${result.irr.toFixed(1)}<small>%</small>`;
-      npvValue.innerHTML = `₹ ${result.npv.toFixed(0).toLocaleString('en-IN')}<small>Cr</small>`;
-      govValue.innerHTML = `₹ ${result.gov.toFixed(0).toLocaleString('en-IN')}<small>Cr</small>`;
-      cityNpvValue.innerHTML = `₹ ${result.city.toFixed(0).toLocaleString('en-IN')}<small>Cr</small>`;
-      econValue.innerHTML = `₹ ${result.econ.toFixed(0).toLocaleString('en-IN')}<small>Cr</small>`;
-      deferValue.textContent = `${snapshot[activeDeal].defer}%`;
-      levyValue.textContent = `${snapshot[activeDeal].levy}%`;
+    function computePlotMetrics(plot) {
+      const row = getPlotRow(plot);
+      const ring = decodeRing(plot.geometry.rings ? plot.geometry.rings[0] : plot.geometry.curveRings ? plot.geometry.curveRings[0] : []);
+      const area = polygonArea(ring);
+      const fsi = Number(state.controls.fsi || 3.5);
+      const greenArea = area * (state.controls.green / 100);
+      const leftoverArea = area * (state.controls.left / 100);
+      const active = Math.min(state.controls.act, ROW_RULES[row].active);
+      const transparency = Math.min(state.controls.trans, ROW_RULES[row].transparency);
+      const status = active >= ROW_RULES[row].active * 0.9 && transparency >= ROW_RULES[row].transparency * 0.9 && greenArea >= area * 0.2 ? 'ok' : (active >= ROW_RULES[row].active * 0.75 || greenArea >= area * 0.12 ? 'warn' : 'bad');
+      const npv = 1200 + (area / 100) * 1.8 + (fsi - 2.5) * 160 + (row === 45 ? 180 : row === 24 ? 120 : row === 18 ? 50 : 20);
+      const irr = 15 + (fsi - 2.5) * 4.2 + (row === 45 ? 2.1 : row === 24 ? 1.4 : row === 18 ? 0.7 : 0.3);
+      return { row, area, greenArea, leftoverArea, active, transparency, status, npv, irr, centroid: centroid(ring), fsi };
+    }
 
-      if (activeDeal === 'inBand') {
-        recommendationText.textContent = 'Use the in-band deal: 35% defer + 0.75% levy keeps both sides whole while staying inside the target IRR band.';
-      } else if (activeDeal === 'publicMax') {
-        recommendationText.textContent = 'Maximise public gain with 100% deferred charges and 2.25% levy while still keeping developers no worse off than today.';
-      } else if (activeDeal === 'developerFloor') {
-        recommendationText.textContent = 'This is the developer floor. It brings IRR down to 20.1%, so it is a stress-case rather than the preferred deal.';
-      } else {
-        recommendationText.textContent = 'Base case is already win-win, with developer IRR at 22.4% and public value at ₹ 4,338 Cr.';
+    function parseData() {
+      const plots = siteData.plots.features.map((feature, index) => {
+        const ring = feature.geometry && feature.geometry.rings ? feature.geometry.rings[0] : feature.geometry && feature.geometry.curveRings ? feature.geometry.curveRings[0] : [];
+        const decoded = decodeRing(ring);
+        return {
+          id: `P${String((feature.attributes && feature.attributes.OBJECTID) || index + 1).padStart(2, '0')}`,
+          attributes: feature.attributes || {},
+          geometry: { ring: decoded },
+          row: getPlotRow(feature),
+          area: polygonArea(decoded)
+        };
+      });
+      const roads = siteData.roads.features.map(feature => ({
+        attributes: feature.attributes || {},
+        paths: (feature.geometry && feature.geometry.paths ? feature.geometry.paths : feature.geometry && feature.geometry.curvePaths ? feature.geometry.curvePaths : []).map(path => decodeRing(path))
+      }));
+      return { plots, roads, site: siteData.site.features.map(f => ({ ring: decodeRing((f.geometry && f.geometry.rings ? f.geometry.rings[0] : [])) })) };
+    }
+
+    async function loadFiles() {
+      const [plots, roads, site, existing] = await Promise.all([
+        fetch('Plots_proposed_2.json').then(r => r.json()),
+        fetch('road_hierarchy.json').then(r => r.json()),
+        fetch('site_boundary.json').then(r => r.json()),
+        fetch('Existing_Buildings.json').then(r => r.json())
+      ]);
+      siteData = { plots: { features: plots.features }, roads: { features: roads.features }, site: { features: site.features }, existing: { features: existing.features } };
+      const parsed = parseData();
+      init(parsed);
+    }
+
+    function drawMap(data) {
+      const svg = document.getElementById('siteSvg');
+      const allPlotRings = data.plots.map(p => p.geometry.ring);
+      const allSiteRings = data.site.map(s => s.ring);
+      const combined = [...allPlotRings, ...allSiteRings];
+      const bounds = combined.reduce((acc, ring) => {
+        for (const p of ring) {
+          acc.minX = Math.min(acc.minX, p[0]); acc.minY = Math.min(acc.minY, p[1]); acc.maxX = Math.max(acc.maxX, p[0]); acc.maxY = Math.max(acc.maxY, p[1]);
+        }
+        return acc;
+      }, { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity });
+
+      const pad = 24;
+      const W = 1000, H = 500;
+      const scale = Math.min((W - pad * 2) / (bounds.maxX - bounds.minX), (H - pad * 2) / (bounds.maxY - bounds.minY));
+      const xoff = (W - (bounds.maxX - bounds.minX) * scale) / 2 - bounds.minX * scale;
+      const yoff = (H - (bounds.maxY - bounds.minY) * scale) / 2 - bounds.minY * scale;
+
+      const project = (p) => [p[0] * scale + xoff, H - (p[1] * scale + yoff)];
+      const ringToPath = (ring) => ring.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${project(p)[0].toFixed(2)} ${project(p)[1].toFixed(2)}`).join(' ') + ' Z';
+
+      svg.innerHTML = '';
+
+      if (data.site.length) {
+        const siteRing = data.site[0].ring;
+        const sitePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        sitePath.setAttribute('d', ringToPath(siteRing));
+        sitePath.setAttribute('fill', '#102b2d');
+        sitePath.setAttribute('stroke', 'rgba(255,255,255,0.12)');
+        sitePath.setAttribute('stroke-width', '1.2');
+        svg.appendChild(sitePath);
       }
 
-      activeRoadRule;
-      plotAreaInput.value = result.area;
-      areaRange.value = result.area;
-      customRoadInput.value = result.road;
-      renderRoadOptions();
-      renderDealButtons();
+      data.roads.forEach((road) => {
+        road.paths.forEach((path) => {
+          if (!path.length) return;
+          const d = path.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${project(p)[0].toFixed(2)} ${project(p)[1].toFixed(2)}`).join(' ');
+          const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          line.setAttribute('d', d);
+          line.setAttribute('fill', 'none');
+          line.setAttribute('stroke', 'rgba(130,168,200,0.8)');
+          line.setAttribute('stroke-width', '2.2');
+          line.setAttribute('stroke-dasharray', '8 7');
+          svg.appendChild(line);
+        });
+      });
+
+      if (siteData && siteData.existing && siteData.existing.features) {
+        siteData.existing.features.forEach((feature) => {
+          const ring = decodeRing(feature.geometry.rings[0]);
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          path.setAttribute('d', ringToPath(ring));
+          path.setAttribute('fill', '#6c7f8c');
+          path.setAttribute('fill-opacity', '0.6');
+          path.setAttribute('stroke', 'rgba(255,255,255,0.12)');
+          svg.appendChild(path);
+        });
+      }
+
+      data.plots.forEach((plot) => {
+        const selected = plot.id === state.selectedPlotId;
+        const metrics = computePlotMetrics(plot);
+        const rowColor = plot.row === 45 ? '#37557f' : plot.row === 24 ? '#2b6a6a' : plot.row === 18 ? '#4a6e4d' : '#6d5b75';
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', ringToPath(plot.geometry.ring));
+        path.setAttribute('fill', selected ? '#1d4f59' : rowColor);
+        path.setAttribute('fill-opacity', selected ? '0.95' : '0.78');
+        path.setAttribute('stroke', selected ? '#bff5eb' : 'rgba(255,255,255,0.16)');
+        path.setAttribute('stroke-width', selected ? '2.5' : '1.3');
+        path.style.cursor = 'pointer';
+        path.addEventListener('click', () => { state.selectedPlotId = plot.id; updateUI(); });
+        svg.appendChild(path);
+
+        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        const [cx, cy] = project(metrics.centroid);
+        label.setAttribute('x', cx);
+        label.setAttribute('y', cy);
+        label.setAttribute('text-anchor', 'middle');
+        label.setAttribute('font-size', '11');
+        label.setAttribute('font-weight', '700');
+        label.setAttribute('fill', '#edf6ff');
+        label.textContent = plot.id;
+        svg.appendChild(label);
+      });
     }
 
-    plotAreaInput.addEventListener('input', () => {
-      const v = Math.max(1000, Number(plotAreaInput.value || 5800));
-      plotAreaInput.value = v;
-      areaRange.value = v;
-      update();
-    });
+    function renderControls() {
+      document.getElementById('plotArea').value = state.controls.area;
+      document.getElementById('areaSlider').value = state.controls.area;
+      document.getElementById('customRow').value = state.row;
+      document.getElementById('s_fsi').value = state.controls.fsi;
+      document.getElementById('s_h').value = state.controls.h;
+      document.getElementById('s_front').value = state.controls.front;
+      document.getElementById('s_side').value = state.controls.side;
+      document.getElementById('s_fp').value = state.controls.fp;
+      document.getElementById('s_muz').value = state.controls.muz;
+      document.getElementById('s_act').value = state.controls.act;
+      document.getElementById('s_trans').value = state.controls.trans;
+      document.getElementById('s_green').value = state.controls.green;
+      document.getElementById('s_left').value = state.controls.left;
+      document.getElementById('s_btl').checked = state.controls.btl;
 
-    areaRange.addEventListener('input', () => {
-      plotAreaInput.value = areaRange.value;
-      update();
-    });
+      document.getElementById('val_fsi').textContent = state.controls.fsi.toFixed(2);
+      document.getElementById('val_h').textContent = `${state.controls.h.toFixed(0)} m`;
+      document.getElementById('val_front').textContent = `${state.controls.front.toFixed(1)} m`;
+      document.getElementById('val_side').textContent = `${state.controls.side.toFixed(1)} m`;
+      document.getElementById('val_fp').textContent = `${state.controls.fp.toFixed(1)} m`;
+      document.getElementById('val_muz').textContent = `${state.controls.muz.toFixed(1)} m`;
+      document.getElementById('val_act').textContent = `${state.controls.act.toFixed(0)}%`;
+      document.getElementById('val_trans').textContent = `${state.controls.trans.toFixed(0)}%`;
+      document.getElementById('val_green').textContent = `${state.controls.green.toFixed(0)}%`;
+      document.getElementById('val_left').textContent = `${state.controls.left.toFixed(0)}%`;
+    }
 
-    customRoadInput.addEventListener('input', () => {
-      activeRoad = Number(customRoadInput.value || 45);
-      update();
-    });
-
-    objectiveButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        objectiveButtons.forEach(b => b.classList.toggle('active', b === btn));
+    function renderRoadGrid() {
+      const rows = [45, 24, 18, 12];
+      const html = rows.map(r => `
+        <div class="road-option ${state.row === r ? 'active' : ''}" data-row="${r}">
+          <strong>${r} m</strong>
+          <small>${ROW_RULES[r].name}</small>
+        </div>
+      `).join('');
+      document.getElementById('roadGrid').innerHTML = html;
+      document.getElementById('roadGrid').querySelectorAll('.road-option').forEach(el => {
+        el.addEventListener('click', () => {
+          state.row = Number(el.dataset.row);
+          updateUI();
+        });
       });
-    });
+    }
 
-    renderRoadOptions();
-    renderDealButtons();
-    renderMatrix();
-    renderStressGrid();
-    update();
+    function renderPlotList(data) {
+      const rows = data.plots.map((plot) => {
+        const metrics = computePlotMetrics(plot);
+        const selected = plot.id === state.selectedPlotId ? 'selected' : '';
+        return `
+          <tr class="${selected}" data-id="${plot.id}">
+            <td>${plot.id}</td>
+            <td>${plot.row} m</td>
+            <td><span class="status-pill ${metrics.status}">${metrics.status === 'ok' ? 'OK' : metrics.status === 'warn' ? 'WARN' : 'BAD'}</span></td>
+          </tr>
+        `;
+      }).join('');
+      const tbody = document.getElementById('plotList');
+      tbody.innerHTML = rows;
+      tbody.querySelectorAll('tr[data-id]').forEach((tr) => {
+        tr.addEventListener('click', () => {
+          state.selectedPlotId = tr.dataset.id;
+          updateUI();
+        });
+      });
+    }
+
+    function renderKpis(data) {
+      const head = ['Plot', 'ROW', 'FSI', 'Active', 'Green sqm', 'Leftover sqm', 'NPV'];
+      const body = data.plots.map((plot) => {
+        const metrics = computePlotMetrics(plot);
+        return `
+          <tr>
+            <td>${plot.id}</td>
+            <td>${metrics.row} m</td>
+            <td>${metrics.fsi.toFixed(2)}</td>
+            <td>${metrics.active.toFixed(0)}%</td>
+            <td>${metrics.greenArea.toFixed(0)}</td>
+            <td>${metrics.leftoverArea.toFixed(0)}</td>
+            <td>₹ ${metrics.npv.toFixed(0)} Cr</td>
+          </tr>
+        `;
+      }).join('');
+      document.getElementById('plotKpiTable').innerHTML = `
+        <thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+        <tbody>${body}</tbody>
+      `;
+    }
+
+    function renderSelectedPlot(data) {
+      const plot = data.plots.find(p => p.id === state.selectedPlotId);
+      const panel = document.getElementById('selectedDetails');
+      if (!plot) {
+        panel.innerHTML = '<div class="head">No plot selected</div><div class="sub">Choose a plot from the map or list.</div>';
+        return;
+      }
+      const metrics = computePlotMetrics(plot);
+      panel.innerHTML = `
+        <div class="head">${plot.id} · ${metrics.row} m ROW</div>
+        <div class="sub">Area: ${metrics.area.toFixed(0)} sqm · Status: ${metrics.status}</div>
+        <div class="sub" style="margin-top:8px;">FSI ${metrics.fsi.toFixed(2)} · Active frontage ${metrics.active.toFixed(0)}% · Green ${metrics.greenArea.toFixed(0)} sqm</div>
+        <div class="sub" style="margin-top:8px;">NPV: ₹ ${metrics.npv.toFixed(0)} Cr · IRR: ${metrics.irr.toFixed(1)}%</div>
+      `;
+    }
+
+    function updateMetrics(data) {
+      const plot = data.plots.find(p => p.id === state.selectedPlotId) || data.plots[0];
+      const metrics = computePlotMetrics(plot || data.plots[0]);
+      document.getElementById('headerSelected').textContent = plot ? plot.id : 'None';
+      document.getElementById('headerRow').textContent = `${state.row} m`;
+      document.getElementById('sceneArea').textContent = `${Number(state.controls.area).toLocaleString('en-IN')} sqm`;
+      document.getElementById('sceneRow').textContent = `${state.row} m`;
+
+      const irr = metrics.irr;
+      const npv = metrics.npv;
+      const gov = metrics.npv * 1.8;
+      document.getElementById('irrValue').innerHTML = `${irr.toFixed(1)}<small>%</small>`;
+      document.getElementById('npvValue').innerHTML = `₹ ${npv.toFixed(0)}<small>Cr</small>`;
+      document.getElementById('govValue').innerHTML = `₹ ${gov.toFixed(0)}<small>Cr</small>`;
+    }
+
+    function updateUI() {
+      renderControls();
+      renderRoadGrid();
+      if (siteData) {
+        const { plots, roads, site } = parseData();
+        drawMap({ plots, roads, site });
+        renderPlotList({ plots });
+        renderKpis({ plots });
+        renderSelectedPlot({ plots });
+        updateMetrics({ plots });
+      }
+    }
+
+    function bindControls() {
+      document.getElementById('plotArea').addEventListener('input', () => {
+        state.controls.area = Number(document.getElementById('plotArea').value || 5800);
+        document.getElementById('areaSlider').value = state.controls.area;
+        updateUI();
+      });
+      document.getElementById('areaSlider').addEventListener('input', () => {
+        state.controls.area = Number(document.getElementById('areaSlider').value || 5800);
+        document.getElementById('plotArea').value = state.controls.area;
+        updateUI();
+      });
+      document.getElementById('customRow').addEventListener('input', () => {
+        const v = Number(document.getElementById('customRow').value || 45);
+        state.row = Math.max(12, Math.min(45, v));
+        updateUI();
+      });
+
+      ['s_fsi','s_h','s_front','s_side','s_fp','s_muz','s_act','s_trans','s_green','s_left'].forEach((id) => {
+        document.getElementById(id).addEventListener('input', () => {
+          const key = id.replace('s_', '');
+          const mapping = {
+            fsi: 'fsi', h: 'h', front: 'front', side: 'side', fp: 'fp', muz: 'muz', act: 'act', trans: 'trans', green: 'green', left: 'left'
+          };
+          state.controls[mapping[key]] = Number(document.getElementById(id).value);
+          updateUI();
+        });
+      });
+
+      document.getElementById('s_btl').addEventListener('change', (e) => {
+        state.controls.btl = e.target.checked;
+        updateUI();
+      });
+
+      document.querySelectorAll('[data-objective]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.objective = btn.dataset.objective;
+          document.querySelectorAll('[data-objective]').forEach(b => b.classList.toggle('active', b === btn));
+          updateUI();
+        });
+      });
+
+      document.getElementById('designWholeSite').addEventListener('click', () => {
+        state.selectedPlotId = siteData && siteData.plots ? siteData.plots.features[0].attributes.OBJECTID ? `P${String(siteData.plots.features[0].attributes.OBJECTID).padStart(2,'0')}` : 'P01' : 'P01';
+        updateUI();
+      });
+
+      document.getElementById('blankSite').addEventListener('click', () => {
+        state.selectedPlotId = null;
+        updateUI();
+      });
+
+      document.getElementById('deselectPlot').addEventListener('click', () => {
+        state.selectedPlotId = null;
+        updateUI();
+      });
+
+      document.getElementById('resetPlot').addEventListener('click', () => {
+        state.controls = {
+          area: 5800,
+          fsi: 3.5,
+          h: 70,
+          front: 4,
+          side: 4,
+          fp: 3.5,
+          muz: 0,
+          act: 60,
+          trans: 50,
+          green: 30,
+          left: 20,
+          btl: true
+        };
+        updateUI();
+      });
+    }
+
+    async function init() {
+      bindControls();
+      await loadFiles();
+      if (siteData && siteData.plots && siteData.plots.features.length) {
+        state.selectedPlotId = `P${String(siteData.plots.features[0].attributes.OBJECTID).padStart(2, '0')}`;
+      }
+      updateUI();
+    }
+
+    init();
   </script>
 </body>
 </html>
